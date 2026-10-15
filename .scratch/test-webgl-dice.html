@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste WebGL 3D Dice</title>
+  <style>
+    body { margin: 0; background: #120e18; overflow: hidden; }
+    #canvas3d { position: fixed; inset: 0; width: 100vw; height: 100vh; }
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+  <script>
+    // Test WebGL context
+    const canvas = document.getElementById('canvas3d');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    console.log('WebGL available:', !!gl);
+  </script>
+</body>
+</html>

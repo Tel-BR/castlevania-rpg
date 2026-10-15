@@ -1,0 +1,4812 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha de Personagem — Fractal RPG: Castlevania</title>
+  
+  <!-- Fontes Góticas e Medievais -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@500;700;900&family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=MedievalSharp&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       VARIÁVEIS DE TEMA & PALETA GÓTICA CASTLEVANIA
+       ========================================================================== */
+    :root {
+      --bg-dark: #09080d;
+      --bg-stone: #13111b;
+      --bg-card: #181524;
+      --bg-card-alt: #221d30;
+      --bg-input: #0e0d16;
+      
+      --gold-primary: #d4af37;
+      --gold-light: #f5e7b2;
+      --gold-dim: #997d26;
+      --gold-dark: #614e18;
+      
+      --crimson-blood: #8f121d;
+      --crimson-bright: #d91c2c;
+      --crimson-glow: rgba(217, 28, 44, 0.45);
+      --crimson-dark: #4d080e;
+      
+      --spirit-blue: #3b82f6;
+      --spirit-glow: rgba(59, 130, 246, 0.45);
+      --spirit-light: #93c5fd;
+      
+      --text-main: #f2eee4;
+      --text-muted: #aca5b6;
+      --text-gold: #e8c872;
+      
+      --border-gothic: #453c58;
+      --border-ornate: #8c733e;
+      
+      --font-title: 'Cinzel Decorative', 'Cinzel', serif;
+      --font-heading: 'Cinzel', serif;
+      --font-gothic: 'MedievalSharp', cursive;
+      --font-body: 'Crimson Pro', Georgia, serif;
+
+      --sheet-shadow: 0 12px 48px rgba(0, 0, 0, 0.9);
+    }
+
+    /* MODO PERGAMINHO SAGRADO (TEMA CLARO COM TEXTURA DE PAPEL VELHO) */
+    body.theme-parchment {
+      --bg-dark: #231b14;
+      --bg-stone: #f2e9d8;
+      --bg-card: #f8f3e7;
+      --bg-card-alt: #e9dec9;
+      --bg-input: #fffdf9;
+      
+      --gold-primary: #875c12;
+      --gold-light: #3d2703;
+      --gold-dim: #6e4a0d;
+      --gold-dark: #3a2604;
+      
+      --crimson-blood: #75141b;
+      --crimson-bright: #991620;
+      --crimson-glow: rgba(153, 22, 32, 0.25);
+      --crimson-dark: #480a0f;
+      
+      --spirit-blue: #1d4ed8;
+      --spirit-glow: rgba(29, 78, 216, 0.25);
+      --spirit-light: #1e40af;
+      
+      --text-main: #2a211a;
+      --text-muted: #5e5146;
+      --text-gold: #664104;
+      
+      --border-gothic: #b8a892;
+      --border-ornate: #875c12;
+      
+      --sheet-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+
+      background-color: #261e16;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(135, 92, 18, 0.18) 0%, transparent 65%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='parchmentNoise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.04 0.08' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.85  0 0 0 0 0.77  0 0 0 0 0.62  0 0 0 0.18 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23parchmentNoise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: auto, 200px 200px;
+    }
+
+    /* ==========================================================================
+       RESET & BASE (TEMA ESCURO COM TEXTURA DE PEDRA GÓTICA)
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(143, 18, 29, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 15% 45%, rgba(26, 20, 38, 0.65) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(30, 20, 45, 0.65) 0%, transparent 45%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='stoneSlate'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.62' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.20  0 0 0 0 0.16  0 0 0 0 0.28  0 0 0 0.14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23stoneSlate)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: auto, auto, auto, 180px 180px;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 24px 14px 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* BARRA SUPERIOR DE FERRAMENTAS */
+    .top-toolbar {
+      width: 100%;
+      max-width: 980px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-ornate);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: var(--font-heading);
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 7px 14px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      border: 1px solid var(--gold-dim);
+      background: linear-gradient(180deg, var(--bg-card-alt) 0%, var(--bg-card) 100%);
+      color: var(--text-gold);
+      user-select: none;
+    }
+
+    .btn:hover {
+      background: var(--gold-primary);
+      color: #0d0c11;
+      border-color: var(--gold-light);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger {
+      border-color: var(--crimson-bright);
+      color: #ff99a2;
+      background: linear-gradient(180deg, #38080c 0%, #200407 100%);
+    }
+
+    .btn-danger:hover {
+      background: var(--crimson-bright);
+      color: #fff;
+      box-shadow: 0 0 12px var(--crimson-glow);
+    }
+
+    .btn-primary {
+      background: linear-gradient(180deg, #591017 0%, #30060b 100%);
+      border-color: var(--crimson-bright);
+      color: #ffd6da;
+    }
+
+    .btn-primary:hover {
+      background: var(--crimson-blood);
+      color: #fff;
+    }
+
+    .select-gothic {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      background: var(--bg-input);
+      color: var(--gold-light);
+      border: 1px solid var(--border-ornate);
+      padding: 6px 12px;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       CONTAINER DA FICHA GÓTICA
+       ========================================================================== */
+    .sheet-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 980px;
+      background: var(--bg-stone);
+      border: 2px solid var(--border-ornate);
+      border-radius: 12px;
+      padding: 38px 32px;
+      box-shadow: var(--sheet-shadow);
+      overflow: hidden;
+    }
+
+    /* MOLDURA DUPLA ORNAMENTADA */
+    .sheet-inner-border {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      right: 8px;
+      bottom: 8px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 8px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* FILIGRANAS NOS CANTOS (SVG) */
+    .corner-ornament {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      fill: none;
+      stroke: var(--gold-primary);
+      stroke-width: 1.5;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.85;
+    }
+    .corner-tl { top: 12px; left: 12px; }
+    .corner-tr { top: 12px; right: 12px; transform: scaleX(-1); }
+    .corner-bl { bottom: 12px; left: 12px; transform: scaleY(-1); }
+    .corner-br { bottom: 12px; right: 12px; transform: scale(-1, -1); }
+
+    /* MARCA D'ÁGUA DO CASTELO */
+    .castle-watermark {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 820px;
+      height: 260px;
+      opacity: 0.08;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ==========================================================================
+       CABEÇALHO DA FICHA
+       ========================================================================== */
+    .sheet-header {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 18px;
+      border-bottom: 2px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .top-crests-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+    }
+
+    /* CARTUCHE COM LOGO FRACTAL */
+    .fractal-brand-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(143, 18, 29, 0.22) 100%);
+      border: 1px solid var(--gold-primary);
+      border-radius: 6px;
+      padding: 6px 14px;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.2);
+      position: relative;
+    }
+
+    .fractal-logo-img,
+    .fractal-logo-svg {
+      height: 22px;
+      width: auto;
+      max-width: 160px;
+      object-fit: contain;
+      fill: var(--gold-primary);
+      filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.6));
+      transition: all 0.3s ease;
+    }
+
+    body.theme-parchment .fractal-logo-svg {
+      fill: var(--gold-primary);
+      filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.25));
+    }
+
+    .fractal-brand-subtitle {
+      font-family: var(--font-heading);
+      font-size: 9px;
+      color: var(--text-gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .main-title-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .sheet-main-title {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      line-height: 1;
+      margin-bottom: 3px;
+    }
+
+    .castlevania-logo-svg {
+      height: 88px;
+      width: auto;
+      max-width: 390px;
+      fill: var(--gold-light);
+      filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.7)) drop-shadow(0 2px 5px rgba(0, 0, 0, 0.95));
+      transition: all 0.3s ease;
+    }
+
+    body.theme-parchment .castlevania-logo-svg {
+      fill: var(--crimson-bright);
+      filter: drop-shadow(0 0 2px rgba(117, 20, 27, 0.4));
+    }
+
+    .sheet-sub-title {
+      font-family: var(--font-gothic);
+      font-size: 13px;
+      color: var(--crimson-bright);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 700;
+      text-shadow: 0 0 10px rgba(217, 28, 44, 0.45);
+    }
+
+    .gothic-divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 12px 0;
+      gap: 12px;
+      opacity: 0.85;
+    }
+
+    .gothic-divider::before,
+    .gothic-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+    }
+
+    .gothic-divider svg {
+      width: 24px;
+      height: 24px;
+      fill: var(--gold-primary);
+    }
+
+    /* ==========================================================================
+       DADOS GERAIS DO PERSONAGEM (GRID PRINCIPAL)
+       ========================================================================== */
+    .character-info-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 2fr 1.5fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-gothic);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--text-gold);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .form-label svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--gold-primary);
+    }
+
+    .form-input, .form-textarea {
+      font-family: var(--font-body);
+      font-size: 16px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-gothic);
+      border-radius: 4px;
+      padding: 8px 10px;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.35);
+    }
+
+    /* SELETOR DE ESPÉCIE / NATUREZA */
+    .nature-toggle-group {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-input);
+      padding: 4px;
+      border: 1px solid var(--border-gothic);
+      border-radius: 6px;
+    }
+
+    .nature-btn {
+      flex: 1;
+      padding: 6px 4px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .nature-btn.active {
+      background: linear-gradient(135deg, var(--crimson-blood) 0%, var(--crimson-dark) 100%);
+      color: #fff;
+      box-shadow: 0 0 10px var(--crimson-glow);
+    }
+
+    .nature-btn[data-nature="humano"].active {
+      background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+      color: #93c5fd;
+      box-shadow: 0 0 10px var(--spirit-glow);
+    }
+
+    /* CONTROLE DE XP */
+    .xp-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-input);
+      border: 1px solid var(--border-ornate);
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
+
+    .xp-counter-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .xp-val-display {
+      font-family: var(--font-title);
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold-light);
+      min-width: 32px;
+      text-align: center;
+    }
+
+    .mini-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      background: var(--bg-card-alt);
+      border: 1px solid var(--gold-dim);
+      color: var(--gold-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    .mini-btn:hover {
+      background: var(--gold-primary);
+      color: #000;
+    }
+
+    /* ==========================================================================
+       PAINEL CENTRAL: RESERVAS DE JOGO (VITALIDADE & ESSÊNCIA)
+       ========================================================================== */
+    .reserves-section {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .reserve-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-ornate);
+      border-radius: 8px;
+      padding: 18px 20px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .reserve-card.vitality-card {
+      border-top: 4px solid var(--crimson-bright);
+    }
+
+    .reserve-card.essence-card {
+      border-top: 4px solid var(--spirit-blue);
+      transition: border-color 0.3s;
+    }
+
+    body.nature-vampire .essence-card,
+    body.nature-dhampir .essence-card {
+      border-top-color: var(--crimson-bright);
+    }
+
+    .reserve-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+      padding-bottom: 8px;
+    }
+
+    .reserve-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .vitality-card .reserve-title {
+      color: #ff858d;
+    }
+
+    .essence-card .reserve-title {
+      color: var(--spirit-light);
+    }
+
+    body.nature-vampire .essence-card .reserve-title,
+    body.nature-dhampir .essence-card .reserve-title {
+      color: #ff9999;
+    }
+
+    .reserve-numeric {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* PIPS / MARCADORES CLICÁVEIS */
+    .pips-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .pip {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--gold-primary);
+      background: var(--bg-input);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.8);
+    }
+
+    .pip:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 10px var(--gold-light);
+    }
+
+    /* PIP DE VITALIDADE */
+    .pip-vitality.filled {
+      background: radial-gradient(circle at 35% 35%, #ff4d5a, #8f121d);
+      border-color: #ff99a2;
+      box-shadow: 0 0 12px var(--crimson-glow);
+    }
+
+    .pip-vitality.filled svg {
+      fill: #ffffff;
+      opacity: 0.95;
+    }
+
+    /* PIP DE ESSÊNCIA (ESPÍRITO OU SANGUE) */
+    .pip-essence.filled {
+      background: radial-gradient(circle at 35% 35%, #60a5fa, #1d4ed8);
+      border-color: #93c5fd;
+      box-shadow: 0 0 12px var(--spirit-glow);
+    }
+
+    body.nature-vampire .pip-essence.filled,
+    body.nature-dhampir .pip-essence.filled {
+      background: radial-gradient(circle at 35% 35%, #ff3b4b, #6b0710);
+      border-color: #ffa1aa;
+      box-shadow: 0 0 12px var(--crimson-glow);
+    }
+
+    .pip svg {
+      width: 20px;
+      height: 20px;
+      fill: rgba(255, 255, 255, 0.25);
+      transition: fill 0.2s;
+    }
+
+    /* GATILHOS E CONSEQÜÊNCIAS */
+    .reserve-info-block {
+      font-size: 13.5px;
+      margin: 8px 0;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 10px 12px;
+      border-radius: 6px;
+      border-left: 3px solid var(--gold-dim);
+    }
+
+    .reserve-info-block p {
+      margin-bottom: 5px;
+    }
+    .reserve-info-block p:last-child {
+      margin-bottom: 0;
+    }
+
+    .tag-trigger {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+    }
+
+    .tag-consequence {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      color: #ff6b77;
+      letter-spacing: 0.5px;
+    }
+
+    /* ALERTA DE RESERVA ZERADA */
+    .lethal-warning-badge {
+      display: none;
+      background: linear-gradient(90deg, #700912 0%, #300307 100%);
+      border: 1px solid #ff4d5a;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      margin-top: 10px;
+      animation: pulseAlert 1.6s infinite ease-in-out;
+      box-shadow: 0 0 14px rgba(255, 77, 90, 0.5);
+    }
+
+    .lethal-warning-badge.active {
+      display: block;
+    }
+
+    @keyframes pulseAlert {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(0.99); }
+    }
+
+    /* BOTÕES DE AÇÃO RÁPIDA DA ESSÊNCIA */
+    .essence-actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn-action-spend {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      padding: 6px 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--gold-dim);
+      border-radius: 4px;
+      color: var(--text-gold);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-action-spend:hover {
+      background: var(--gold-primary);
+      color: #0d0c11;
+      border-color: var(--gold-light);
+    }
+
+    /* ==========================================================================
+       SEÇÃO DOS FATOS (7 FATOS CENTRAIS DO FRACTAL)
+       ========================================================================== */
+    .facts-section {
+      position: relative;
+      z-index: 2;
+      margin-bottom: 28px;
+    }
+
+    .section-title-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 8px;
+    }
+
+    .section-title {
+      font-family: var(--font-title);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title svg {
+      width: 22px;
+      height: 22px;
+      fill: var(--gold-primary);
+    }
+
+    .facts-category-title {
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-gold);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 16px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .facts-category-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(212, 175, 55, 0.3);
+    }
+
+    .facts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .fact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gothic);
+      border-radius: 6px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      position: relative;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .fact-card:hover {
+      border-color: var(--gold-dim);
+    }
+
+    .fact-card.fact-broken {
+      border-color: #8f121d;
+      background: linear-gradient(135deg, rgba(64, 8, 12, 0.45) 0%, rgba(24, 21, 35, 0.85) 100%);
+      opacity: 0.8;
+    }
+
+    .fact-card.fact-broken .fact-input {
+      text-decoration: line-through;
+      color: #aba4b5;
+    }
+
+    .fact-number-badge {
+      font-family: var(--font-title);
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--gold-primary);
+      width: 28px;
+      height: 28px;
+      background: var(--bg-input);
+      border: 1px solid var(--gold-dim);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .fact-content-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .fact-premise-label {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .fact-input {
+      font-family: var(--font-body);
+      font-size: 15.5px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed rgba(212, 175, 55, 0.25);
+      color: var(--text-main);
+      padding: 4px 0;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+
+    .fact-input:focus {
+      border-bottom-color: var(--gold-primary);
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    .fact-actions-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    /* BOTÃO DE RUPTURA (QUEBRADO) */
+    .btn-ruptura {
+      font-family: var(--font-heading);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-gothic);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-ruptura:hover {
+      border-color: #d91c2c;
+      color: #ff99a2;
+    }
+
+    .btn-ruptura.active {
+      background: #8f121d;
+      border-color: #ff4d5a;
+      color: #fff;
+      box-shadow: 0 0 8px var(--crimson-glow);
+    }
+
+    /* CHECKBOX PARA INCLUIR NA ROLAGEM */
+    .fact-roll-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      color: var(--gold-light);
+      cursor: pointer;
+      user-select: none;
+      background: rgba(212, 175, 55, 0.08);
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(212, 175, 55, 0.25);
+    }
+
+    .fact-roll-toggle input {
+      accent-color: var(--gold-primary);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       SUB-ARMAS & RELÍQUIAS VINCULADAS (MÓDULO CASTLEVANIA)
+       ========================================================================== */
+    .relics-section {
+      position: relative;
+      z-index: 2;
+      background: var(--bg-card);
+      border: 2px solid var(--border-ornate);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 28px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .relics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .relic-card {
+      background: var(--bg-stone);
+      border: 1px solid var(--border-gothic);
+      border-radius: 6px;
+      padding: 14px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .relic-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .relic-name-input {
+      font-family: var(--font-heading);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-light);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border-ornate);
+      outline: none;
+      width: 100%;
+      padding-bottom: 2px;
+    }
+
+    .relic-rule-note {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .relic-activate-btn {
+      font-family: var(--font-heading);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 8px 12px;
+      background: linear-gradient(135deg, #700912 0%, #300307 100%);
+      border: 1px solid var(--crimson-bright);
+      color: #ffd6da;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .relic-activate-btn:hover {
+      background: var(--crimson-bright);
+      color: #fff;
+      box-shadow: 0 0 12px var(--crimson-glow);
+    }
+
+    /* ==========================================================================
+       ANOTAÇÕES, CICATRIZES & INVENTÁRIO
+       ========================================================================== */
+    .notes-section {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .notes-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-gothic);
+      border-radius: 6px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .notes-textarea {
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-gothic);
+      border-radius: 4px;
+      padding: 8px;
+      color: var(--text-main);
+      min-height: 110px;
+      resize: vertical;
+      outline: none;
+    }
+
+    .notes-textarea:focus {
+      border-color: var(--gold-primary);
+    }
+
+    /* ==========================================================================
+       OVERLAY MOTOR 3D REAL (@3d-dice/dice-box) & BARRA DE AÇÃO COMPACTA
+       ========================================================================== */
+    .dice-box-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9950;
+      overflow: hidden;
+      background: transparent;
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+
+    .dice-box-overlay.lights-dimmed {
+      background: radial-gradient(circle at 50% 50%, rgba(12, 9, 18, 0.72) 0%, rgba(5, 3, 8, 0.90) 100%);
+      backdrop-filter: blur(2.5px);
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .dice-box-overlay canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    .dice-action-dock {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9960;
+      background: linear-gradient(180deg, rgba(28, 22, 38, 0.96) 0%, rgba(13, 10, 18, 0.98) 100%);
+      border: 1px solid var(--border-ornate);
+      border-radius: 28px;
+      padding: 6px 14px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.85), 0 0 18px rgba(212, 175, 55, 0.25);
+      backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+      max-width: calc(100vw - 24px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .dock-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dock-gothic-icon {
+      font-size: 16px;
+      filter: drop-shadow(0 0 4px rgba(212, 175, 55, 0.5));
+    }
+
+    .dock-label {
+      font-family: var(--font-title);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .dock-pool-selector {
+      display: flex;
+      gap: 4px;
+    }
+
+    .btn-dock-pool {
+      padding: 5px 9px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--bg-input);
+      border: 1px solid var(--border-gothic);
+      border-radius: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-dock-pool:hover {
+      border-color: var(--gold-primary);
+      color: var(--gold-light);
+    }
+
+    .btn-dock-pool.active {
+      background: var(--gold-primary);
+      color: #0d0c11;
+      border-color: var(--gold-light);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.45);
+    }
+
+    .dock-toggle-chip {
+      font-size: 11px;
+      color: var(--gold-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      border-radius: 14px;
+      padding: 4px 9px;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .dock-toggle-chip:hover {
+      background: rgba(212, 175, 55, 0.22);
+      border-color: var(--gold-primary);
+    }
+
+    .dock-toggle-chip input {
+      accent-color: var(--gold-primary);
+      cursor: pointer;
+    }
+
+    .btn-roll-dock {
+      padding: 6px 14px;
+      font-size: 12px;
+      border-radius: 16px;
+      white-space: nowrap;
+      letter-spacing: 0.5px;
+      box-shadow: 0 0 10px rgba(185, 28, 28, 0.4);
+    }
+
+    .btn-roll-dock:hover {
+      box-shadow: 0 0 16px rgba(220, 38, 38, 0.7);
+    }
+
+    .btn-clear-dock {
+      padding: 6px 12px;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 16px;
+      white-space: nowrap;
+      background: rgba(30, 24, 38, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold-light);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-clear-dock:hover {
+      background: rgba(185, 28, 28, 0.4);
+      border-color: #ef4444;
+      color: #fff;
+    }
+
+    .roller-outcome-banner {
+      position: fixed;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9960;
+      min-width: 320px;
+      max-width: calc(100vw - 32px);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(14px);
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+      padding: 10px 32px 10px 14px;
+      border-radius: 8px;
+      display: none;
+      line-height: 1.35;
+    }
+
+    /* Modal de Declaração / Confirmação de Risco */
+    .roll-confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(4px);
+      z-index: 9980;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .roll-confirm-overlay.show {
+      display: flex;
+    }
+
+    .roll-confirm-card {
+      background: linear-gradient(180deg, #1c1524 0%, #0f0b14 100%);
+      border: 1px solid var(--border-ornate);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 440px;
+      padding: 22px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.92), 0 0 24px rgba(212, 175, 55, 0.2);
+      color: var(--text-primary);
+      position: relative;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    .roll-confirm-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.25);
+      padding-bottom: 12px;
+      margin-bottom: 14px;
+    }
+
+    .roll-confirm-title {
+      font-family: var(--font-title);
+      font-size: 16px;
+      color: var(--gold-light);
+      margin: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .roll-confirm-pool-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(139, 21, 37, 0.35);
+      border: 1px solid var(--crimson-light);
+      color: var(--gold-light);
+      font-family: var(--font-heading);
+      font-size: 13.5px;
+      font-weight: 700;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+
+    .roll-confirm-risk-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 16px 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .roll-confirm-risk-list li {
+      padding: 7px 0;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .roll-confirm-checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 18px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .roll-confirm-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .banner-close-btn {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      background: transparent;
+      border: none;
+      color: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      opacity: 0.7;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: opacity 0.2s;
+    }
+
+    .banner-close-btn:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .roller-outcome-banner.show {
+      display: block;
+    }
+
+    .banner-success {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid #22c55e;
+      color: #86efac;
+    }
+
+    .banner-critical {
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid var(--gold-light);
+      color: #fef08a;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .banner-fail {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid #ef4444;
+      color: #fca5a5;
+    }
+
+    .xp-gain-badge {
+      display: inline-block;
+      margin-top: 3px;
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold-light);
+      border: 1px solid var(--gold-dim);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10.5px;
+    }
+
+    /* CHIPS DE RUPTURA ASSISTIDA */
+    .rupture-chips-container {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed rgba(239, 68, 68, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      text-align: left;
+    }
+
+    .rupture-chips-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #fca5a5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .rupture-chips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .chip-rupture-item {
+      font-family: var(--font-body);
+      font-size: 11px;
+      padding: 3px 8px;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #ef4444;
+      color: #fee2e2;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .chip-rupture-item:hover {
+      background: #ef4444;
+      color: #fff;
+      transform: scale(1.02);
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+
+    .pips-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 4px;
+      font-style: italic;
+      letter-spacing: 0.3px;
+    }
+
+    /* MODO VTT COMPACTO (OWLBEAR RODEO COMPATÍVEL) */
+    body.mode-vtt-compact {
+      padding: 8px 6px 75px;
+      overflow-x: hidden;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    body.mode-vtt-compact .sheet-wrapper {
+      padding: 14px 10px;
+      max-width: 100%;
+      border-width: 1px;
+      box-sizing: border-box;
+    }
+    body.mode-vtt-compact .top-toolbar {
+      padding: 6px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    body.mode-vtt-compact .top-toolbar .toolbar-group {
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    body.mode-vtt-compact .top-toolbar .btn,
+    body.mode-vtt-compact .top-toolbar .select-gothic {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+    body.mode-vtt-compact .top-toolbar label {
+      display: none;
+    }
+    body.mode-vtt-compact .castlevania-logo-svg {
+      max-width: 160px;
+      height: auto;
+    }
+    body.mode-vtt-compact .character-info-grid {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    body.mode-vtt-compact .reserves-section {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    body.mode-vtt-compact .relics-grid,
+    body.mode-vtt-compact .notes-section {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    body.mode-vtt-compact .top-crests-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    body.mode-vtt-compact .fact-card {
+      padding: 8px 10px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    body.mode-vtt-compact .fact-content-wrap {
+      min-width: 0;
+    }
+    body.mode-vtt-compact .dice-action-dock {
+      bottom: 8px;
+      width: calc(100% - 16px);
+      justify-content: center;
+      flex-wrap: wrap;
+      border-radius: 14px;
+      padding: 6px 8px;
+      gap: 6px;
+    }
+    body.mode-vtt-compact .dock-btn-main {
+      padding: 8px 14px;
+      font-size: 13px;
+    }
+    body.mode-vtt-compact .roller-outcome-banner {
+      width: calc(100% - 24px);
+      max-width: 440px;
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+    body.mode-vtt-compact .roll-modal-content {
+      max-width: calc(100vw - 20px);
+      padding: 14px 12px;
+    }
+    .btn-vtt-active {
+      border-color: #10b981 !important;
+      color: #a7f3d0 !important;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+    }
+
+    /* MODAL DE GRIMÓRIO DE REGRAS */
+    .rules-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .rules-modal-overlay.open {
+      display: flex;
+    }
+
+    .rules-modal-card {
+      background: var(--bg-stone);
+      border: 2px solid var(--border-ornate);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 24px 28px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
+      position: relative;
+    }
+
+    .rules-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-ornate);
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .rules-modal-title {
+      font-family: var(--font-title);
+      font-size: 18px;
+      color: var(--gold-light);
+    }
+
+    .rules-modal-body h4 {
+      font-family: var(--font-heading);
+      font-size: 14px;
+      color: var(--gold-light);
+      margin: 14px 0 6px;
+    }
+
+    .rules-modal-body p, .rules-modal-body li {
+      font-size: 14.5px;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .rules-modal-body ul {
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    /* TOAST NOTIFICAÇÃO */
+    .toast-msg {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-30px);
+      background: var(--bg-card);
+      border: 1px solid var(--gold-primary);
+      color: var(--gold-light);
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 6px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* ==========================================================================
+       ESTILOS DE IMPRESSÃO (@MEDIA PRINT)
+       ========================================================================== */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #000 !important;
+        padding: 0 !important;
+      }
+      .top-toolbar, .dice-action-dock, .dice-box-overlay, .rules-modal-overlay, .toast-msg, .roller-outcome-banner {
+        display: none !important;
+      }
+      .sheet-wrapper {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+        padding: 14px !important;
+        max-width: 100% !important;
+      }
+      .sheet-inner-border {
+        border-color: #666 !important;
+      }
+      .corner-ornament {
+        stroke: #333 !important;
+      }
+      .fractal-brand-badge {
+        border: 1px solid #444 !important;
+        background: none !important;
+        box-shadow: none !important;
+      }
+      .fractal-logo-img,
+      .fractal-logo-svg {
+        fill: #000 !important;
+        filter: none !important;
+      }
+      .sheet-main-title {
+        color: #000 !important;
+        text-shadow: none !important;
+      }
+      .castlevania-logo-svg {
+        fill: #000 !important;
+        filter: none !important;
+      }
+      .sheet-sub-title {
+        color: #666 !important;
+        text-shadow: none !important;
+      }
+      .character-info-grid, .reserve-card, .fact-card, .relics-section, .notes-box {
+        background: #fff !important;
+        border-color: #888 !important;
+        box-shadow: none !important;
+      }
+      .form-input, .notes-textarea, .fact-input, .relic-name-input {
+        background: #fff !important;
+        color: #000 !important;
+        border-color: #aaa !important;
+      }
+      .pip {
+        border-color: #333 !important;
+        background: #fff !important;
+      }
+      .pip.filled {
+        background: #000 !important;
+      }
+      .btn, .mini-btn, .nature-btn, .relic-activate-btn {
+        display: none !important;
+      }
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+      .character-info-grid, .reserves-section, .relics-grid, .notes-section {
+        grid-template-columns: 1fr;
+      }
+      .sheet-wrapper {
+        padding: 24px 14px;
+      }
+      .top-crests-row {
+        flex-direction: column;
+      }
+      .castlevania-logo-svg {
+        max-width: 250px;
+        height: auto;
+      }
+      .dice-action-dock {
+        width: calc(100% - 24px);
+        flex-wrap: wrap;
+        justify-content: center;
+        border-radius: 16px;
+        padding: 6px 8px;
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+<body class="nature-humano">
+
+  <!-- ==========================================================================
+       BARRA DE FERRAMENTAS SUPERIOR
+       ========================================================================== -->
+  <div class="top-toolbar">
+    <div class="toolbar-group">
+      <label class="form-label" style="margin:0;">HERÓIS PRONTOS:</label>
+      <select id="presetHeroSelect" class="select-gothic" onchange="loadSelectedHero(this.value)">
+        <option value="">-- Selecionar Modelo / Exemplo --</option>
+        <option value="radu">Radu Bărbat (Caçador da Floresta - Humano)</option>
+        <option value="elena">Elena dos Oradores (Conjuradora Elemental - Humana)</option>
+        <option value="miklos">Miklós (Dhampiro Solitário - Dhampiro)</option>
+        <option value="vespera">Condessa Vespera de Corvin (Vampira Renegada)</option>
+        <option value="limpar">✦ Nova Ficha em Branco ✦</option>
+      </select>
+    </div>
+
+    <div class="toolbar-group">
+      <button class="btn" id="btnToggleVtt" onclick="toggleVttMode()" title="Alternar Modo VTT Compacto para Owlbear Rodeo">
+        🦉 VTT / Owlbear
+      </button>
+      <button class="btn" onclick="toggleTheme()" title="Alternar entre Noite Gótica e Pergaminho">
+        🌓 Tema Visual
+      </button>
+      <button class="btn" onclick="openRulesModal()" title="Consultar Regras Rápidas">
+        📖 Regras
+      </button>
+      <button class="btn" onclick="saveCharacterSheet(true)" title="Salvar Ficha">
+        💾 Salvar
+      </button>
+      <button class="btn" onclick="exportJSON()" title="Baixar arquivo JSON">
+        📥 Exportar
+      </button>
+      <button class="btn" onclick="document.getElementById('importFileInput').click()" title="Carregar arquivo JSON">
+        📤 Importar
+      </button>
+      <input type="file" id="importFileInput" accept=".json" style="display:none;" onchange="importJSON(event)">
+      <button class="btn btn-primary" onclick="window.print()" title="Imprimir ou Salvar PDF">
+        🖨️ Imprimir / PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       CONTAINER DA FICHA GÓTICA
+       ========================================================================== -->
+  <div class="sheet-wrapper">
+    <div class="sheet-inner-border"></div>
+
+    <!-- FILIGRANAS DE CANTO -->
+    <svg class="corner-ornament corner-tl" viewBox="0 0 50 50">
+      <path d="M 2 2 L 48 2 M 2 2 L 2 48 M 6 6 L 36 6 M 6 6 L 6 36 M 14 14 C 20 14 26 20 26 26 M 2 2 L 18 18" />
+      <circle cx="10" cy="10" r="3" />
+      <circle cx="2" cy="2" r="2" />
+    </svg>
+    <svg class="corner-ornament corner-tr" viewBox="0 0 50 50">
+      <path d="M 2 2 L 48 2 M 2 2 L 2 48 M 6 6 L 36 6 M 6 6 L 6 36 M 14 14 C 20 14 26 20 26 26 M 2 2 L 18 18" />
+      <circle cx="10" cy="10" r="3" />
+      <circle cx="2" cy="2" r="2" />
+    </svg>
+    <svg class="corner-ornament corner-bl" viewBox="0 0 50 50">
+      <path d="M 2 2 L 48 2 M 2 2 L 2 48 M 6 6 L 36 6 M 6 6 L 6 36 M 14 14 C 20 14 26 20 26 26 M 2 2 L 18 18" />
+      <circle cx="10" cy="10" r="3" />
+      <circle cx="2" cy="2" r="2" />
+    </svg>
+    <svg class="corner-ornament corner-br" viewBox="0 0 50 50">
+      <path d="M 2 2 L 48 2 M 2 2 L 2 48 M 6 6 L 36 6 M 6 6 L 6 36 M 14 14 C 20 14 26 20 26 26 M 2 2 L 18 18" />
+      <circle cx="10" cy="10" r="3" />
+      <circle cx="2" cy="2" r="2" />
+    </svg>
+
+    <!-- SILHUETA D'ÁGUA DO CASTELO -->
+    <svg class="castle-watermark" viewBox="0 0 800 240">
+      <circle cx="400" cy="70" r="55" fill="none" stroke="#d91c2c" stroke-width="2" opacity="0.6"/>
+      <path d="M 50 240 L 150 160 L 180 200 L 240 120 L 270 180 L 320 90 L 360 170 L 400 40 L 440 170 L 480 90 L 530 180 L 560 120 L 620 200 L 650 160 L 750 240 Z" fill="#991b1b" />
+    </svg>
+
+    <!-- CABEÇALHO COM LOGO FRACTAL E TÍTULOS -->
+    <header class="sheet-header">
+      <div class="top-crests-row">
+
+        <!-- TÍTULO CENTRAL GÓTICO: LOGO CASTLEVANIA OFICIAL VETORIAL EMBUTIDO -->
+        <div class="main-title-container">
+          <h1 class="sheet-main-title" title="Castlevania">
+            <svg 
+              id="castlevaniaLogoEl"
+              class="castlevania-logo-svg" 
+              viewBox="0 0 474 153" 
+              xmlns="http://www.w3.org/2000/svg" 
+              role="img" 
+              aria-label="Castlevania"
+            >
+              <path d="M165.1 33.7c-3.9 14.7-8.8 24.8-14.7 29.9-2.1 1.6-3.9 2.4-4.1 2.7h5.9v34.1c0 .7-.4 1.5-1.3 2.2-.8.7-1.6 1.1-2.4 1.1-.3 0-.7-.1-1.1-.3v.5c4.5.9 8.8 5 13.3 12.6 1.2-1.3 14.8-16.4 15.4-17.1 0-.1 0-.1-.1-.1-2.4 2-4.3 3-5.9 3-3.1 0-4.7-2.4-4.7-7.2V66.3h10.2v-7.5h-10.2V33.6zm-24.8 19.7c-2.7 2.6-5 2.8-7.5 2.8-3.2 0-6.3-2.1-9.4-6.1-1.9 3.5-4.5 6.9-7.8 10.3-4.7 4.9-7.4 7.8-8.1 8.5-2.3 3.2-3.5 6.9-3.5 10.8 0 3.2.7 5.9 2.2 8.1 1.3 1.9 3.1 3.7 6 5.8l.4.3-.2.5c-2.3 5.2-5.1 11.7-7.9 16.8 1.3-1 2.8-1.9 4.4-1.9 2.6 0 5.8.8 9.8 2.5 3.6 1.5 6.3 3.1 8.3 4.7.9-1.1 13.6-17.2 13.6-17.2 3.1-4.1 4.7-8.9 4.7-14.2 0-3.2-.7-6.2-2-8.7-1.5-2.8-3.2-4.3-5.9-5.3v-4l1-1.3c3-4 5.6-7.5 6.2-19-.6 1.8-1.9 4.3-4.3 6.6m-24.2 23.1c-1.7-3.1-2.5-6.2-2.5-9.3 0-2.1.6-4.1 1.7-5.7l.6-.9.6.9c4.3 6 8.9 9 13.7 9 1.8 0 3.4-.4 4.9-1.3l1.6-.9-.5 1.7q-1.05 4.05-4.5 7.8c-2.6 2.9-5.2 4.4-7.8 4.4-3.1-.2-5.8-2-7.8-5.7m-3.2 18.7q1.5-4.5 4.8-8.1c2.7-3 5.6-4.5 8.6-4.5 3.6 0 6.4 1.9 8.3 5.6 1.4 2.8 2.1 6.1 2.1 9.8 0 2.2-.4 4.3-1.2 6.5l-.4.9-.8-.6c-7.5-5.8-14.4-8.7-20.6-8.7h-1zm105-38.7c-4 2.3-6.6 6-7.7 11-.5 2.3-.7 7.1-.7 14.2s.7 12.7 2 16.5c1.9 5.4 5.4 9.6 10.4 12.5 2.7 1.6 4.5 2.6 5.6 3.1.2-.1.5-.4 1.1-1.2l1.5-1.9c3.5-3.7 8.6-8.6 15.1-14.3-.7.4-1.6 1-3 2-1.9 1.4-3.7 2.1-5.3 2.1-2.9 0-5.6-1.1-8-3.2-2.9-2.6-5-6.3-6.1-11.2l-.1-.4s20.8-16.8 21.6-17.5c-.5-.9-9.8-19.3-10.5-20.5-1.3.5-15.9 8.8-15.9 8.8m4.8-1 1.4-.9 9.2 20.2-10.6 8.2zm120.2 6c0 .1 0 .1.1.2 1-1.3 2.1-1.7 3-1.7 2 0 3.4 1.8 4.1 5.2.3 1.2.4 9.7.5 25.2v.5c-.1 7.5-.9 9.1-1.6 9.7-.4.4-1.3.8-2.8 1.2-.3.1-.6.2-.8.4 2.1.5 4.4 1.9 6.9 4.5 1.9 1.9 3.4 3.9 4.6 5.9.7-1.7 1.8-3.6 3.5-5.7 2.1-2.8 3.9-4.3 5.5-4.8-.2-.3-.5-.6-.9-1.1-1.3-1.5-1.5-2-1.5-2.4V65.2l.2-.2c3.9-3.6 5.3-4 6.1-4 1.3 0 3.6.5 3.6 3.9v35.5c0 1.9.8 3.2 2.5 6.2l.1.1c1.5 2.9 3.1 4.8 4.6 5.7.8-.8 11.1-11.1 12.6-12.5-1 .7-1.9 1-2.8 1-2 0-3.2-1-3.5-2.9-.2-2-.7-21.5-.7-27.1v-1.3c.1-2.8.3-5.1.6-6.8.4-1.9 1.5-3.1 3.1-3.6.6-.2 1-.3 1.3-.5-4.2-2.7-7.7-6.4-10.5-11.2-1.2 1.1-17.3 15.2-17.3 15.2V61c0-3.8-1.2-6.5-2.1-8.1-.9-1.5-2.9-3.4-5.9-5.6-.7 1.1-11.9 13.5-12.5 14.2m-89.3-13c-6.6 7.9-8 11.6-8 13.3 0 2.1 1.4 3.8 2.7 5.5 1.6 1.9 3.4 4.2 3.4 7.4V97c0 2.1-1.1 3.1-2 3.7-.8.4-1.6.6-2.2.6v.3c2 .2 7.3 2 18.5 12.9.9-.7 6.5-5.4 6.5-5.4 11.6-10.8 18.8-18.1 19.2-31.3v-.5c0-4.9-1.8-10-3.7-12.7q-.75-1.05-1.5-1.5c-.6-.5-1.1-.9-1.1-1.6v-.1c0-.7.7-1.2 1.4-1.7.9-.6 6.6-6.9 11.1-11.9-4 1.2-26.3 7.9-28 8.4 5.5 7.4 11.5 21.9 11.5 28.1 0 9.5-6.7 16-9 17.2l-.3.2-.3-.2c-.2-.1-.5-.3-1.8-1.4-1.9-1.6-5-4.3-6.6-5.1l-.4-.2v-25c0-3.6-.1-6-1.3-7.2h-.1v-.1c-.6-.9-1.3-1.7-1.9-2.4-1.4-1.7-2.7-3.2-2.7-5.2q0-1.65 1.2-3.9s.9-1.7 1.1-2c0-.2.1-4.3.1-6.5-1.8 1.8-5.7 6-5.8 6m142.6 10.2c.8-.7 1.6-1.1 2.3-1.1s1.4.5 2 1.3c.5.8.7 1.5.7 2.2V99c0 1.8.9 4.3 2.7 7.6 1.6 2.9 3.1 4.8 4.4 5.5.8-.8 11.8-12.3 13.1-13.6-1.1.8-2 1.1-2.9 1.1-1.5 0-3.5-.7-3.8-3.9V60.9c.4-1.7 1.5-2.9 3.3-3.3.5-.1.8-.2 1-.3-3.3-2-7.1-5.8-11.1-11.1-.9 1.1-9.8 10.5-11.7 12.5m22.1-24c-3.3 0-10.2 7-10.2 10.3 0-3.3-6.9-10.3-10.2-10.3 3.3 0 10.2-7 10.2-10.3 0 3.3 6.9 10.3 10.2 10.3m-315.5 65.6c-1.3 1-2.4 1.5-3.4 1.5-2.7 0-4-3.8-4-12.1 0-1 .4-22 .5-22.8 0-1 .3-2 .8-3.1.6-1.1 1.3-1.9 2.4-2.4.1 0 1.3-.3 2.1-.6-.1-.1-.1-.2-.2-.2-6.7-2-12.6-6.4-17.6-13-2.7 2.5-5.4 4.6-8 6.5l-3.1 2c-.1.1-3.8 2.2-5.4 3-3.7 1.7-5.9 3.4-6.4 4.9-.8 2.3-1.1 9.1-1.1 20.2 0 9.6.2 16.1.5 19.3q.15 2.25 3 5.7c1.6 1.9 3.2 3.3 4.7 4.3 5.3-5.8 10.1-10.5 14-13.8l1.1-.9.1 1.4c.4 4.5 3.1 9 8.1 13.2 2.8-3.9 6.8-8.2 12-13-.1 0-.1 0-.1-.1m-20.1-2.9-.2.2c-4.1 3.7-5.6 4.1-6.5 4.1-1.6 0-3.5-.9-3.5-4.9V57.3c.1-.1.3-.2.4-.3l.4-.3c.2.3.5.5.5.5 2.1 2.4 4.9 4.8 8.6 7.3l.3.2zm258 2.9c-1.3 1-2.4 1.5-3.4 1.5-2.7 0-4-3.8-4-12.1 0-1.1.1-2.5.2-4.4l.2-4.3V67c0-1 .3-2 .8-3.1s1.4-1.9 2.4-2.4c0 0 1.3-.3 2.1-.6 0-.1-.1-.2-.2-.2-6.7-2-12.6-6.4-17.6-13-3 2.7-6 5.1-9 7.1l-1.9 1.2c-1.9 1.2-3.8 2.2-5.7 3.1-3.7 1.7-5.9 3.4-6.4 4.9-.8 2.3-1.1 9.1-1.1 20.2 0 9.6.2 16.1.5 19.3q.15 2.25 3 5.7c1.6 1.9 3.2 3.3 4.7 4.3 5.4-5.8 10.1-10.5 14-13.8l1.1-.9.1 1.4c.4 4.5 3.1 9 8.1 13.2 2.8-3.9 6.8-8.2 12-13 .2 0 .2 0 .1-.1m-20.1-2.7-.2.2c-4.1 3.7-5.6 4.1-6.5 4.1-1.6 0-3.5-.9-3.5-4.9V57.3c.2-.2.5-.3.7-.5l.1-.1c.2.3.4.5.4.5 2.1 2.4 4.9 4.8 8.6 7.3l.3.2c.1.1.1 32.8.1 32.9m147.7 2.7c-1.3 1-2.4 1.5-3.4 1.5-2.7 0-4-3.8-4-12.1 0-1 .5-22 .5-22.8 0-1 .3-2 .8-3.1s1.4-1.9 2.4-2.4c0 0 1.3-.3 2.1-.6 0-.1-.1-.2-.2-.2-6.7-2-12.6-6.4-17.6-13-3 2.7-6 5.1-8.9 7.1l-1.9 1.2c-1.9 1.2-3.8 2.2-5.7 3.1-3.7 1.7-5.9 3.4-6.4 4.9-.8 2.3-1.1 9.1-1.1 20.2 0 9.6.2 16.1.5 19.3q.15 2.25 3 5.7c1.6 1.9 3.2 3.3 4.7 4.3 5.3-5.8 10.1-10.5 14-13.8l1.1-.9.1 1.4c.4 4.5 3.1 9 8.1 13.2 2.8-3.9 6.8-8.2 12-13 0 .1 0 .1-.1 0m-20.1-2.7-.2.2c-4.1 3.7-5.6 4.1-6.5 4.1-1.6 0-3.5-.9-3.5-4.9V57.3c.2-.1.5-.3.7-.5l.2-.1c.2.3.4.5.4.5 2 2.4 4.9 4.8 8.6 7.4l.3.2zm-241.4 4.9c-1.9 1.3-3.4 1.9-4.8 1.9-2.1 0-4.5-.9-4.5-5.3V40.4c0-2.4.8-4.9 2.3-7.4 1.8-2.9 3.9-4.4 6.5-4.4h.3v-.3h-3.9c-.8.1-2.4.4-4.9 1-7.6 1.6-11.9 6.1-13.3 13.8l-.1.6h-.3c-.5-1.5-1.3-3.1-2.3-5.2l-2.6-5.1-1.3.8s2.1 3.7 2.7 4.9c.7 1.3 1.9 3.7 2.4 5.2.9 3.2 1.4 5.5 1.4 6.9V102l-.1.2c-.8 1.1-1.7 1.6-2.6 1.6-.4 0-.8-.1-1.1-.3 1 1 5.6 5.7 5.6 5.7 2.5 2.7 4.5 5.1 5.8 7.3 6.6-6.6 11.6-11.2 14.8-13.8.1 0 0-.1 0-.2M89.4 139.2c-34.6 0-62.7-28.1-62.7-62.7s28-62.7 62.7-62.7c20.6 0 38.9 10 50.3 25.4-12.6-21-35.6-35-61.9-35C38 4.2 5.6 36.6 5.6 76.5s32.4 72.3 72.3 72.3c26.3 0 49.3-14 61.9-35-11.4 15.4-29.7 25.4-50.4 25.4"/>
+            </svg>
+          </h1>
+          <div class="sheet-sub-title">NOITE ETERNA SOB AS SOMBRAS DE CSEJTE</div>
+        </div>
+
+        <!-- EMBLEMA DIREITO: LOGO FRACTAL OFICIAL (VETORIAL SVG SIMPLIFICADO EMBUTIDO) -->
+        <div class="fractal-brand-badge" title="Desenvolvido sob o sistema Fractal RPG">
+          <svg 
+            id="fractalLogoEl"
+            class="fractal-logo-svg" 
+            viewBox="0 0 125.958 17.39" 
+            xmlns="http://www.w3.org/2000/svg" 
+            role="img" 
+            aria-label="Logo Fractal RPG"
+          >
+            <path d="M61.646.093v.001a8.63 8.63 0 0 0-8.465 8.648c0 4.73 3.76 8.549 8.465 8.646v.002h9.016v-6.74h-3.496V7.89h3.496V.093H61.83zM0 .093V17.39h13.733v-4.233h3.749V8.741h-3.749v-1.84h3.749V.093zm35.791 17.205h19.23L45.29.447zM108.477.093V17.39h17.481V7.913h-3.68V.093zm-89.254 0V17.39h15.549l-3.023-3.363a7.79 7.79 0 0 0 2.954-6.125 7.79 7.79 0 0 0-7.809-7.81zM72.41 0v7.82h3.496v9.478h10.305V7.82h3.497V0zm15.733 17.298h19.23L97.644.447z"/>
+          </svg>
+          <span class="fractal-brand-subtitle">SISTEMA FRACTAL RPG</span>
+        </div>
+
+      </div>
+
+      <!-- DIVISOR HERÁLDICO GÓTICO -->
+      <div class="gothic-divider">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2L15 8L21 9L16.5 14L18 20L12 17L6 20L7.5 14L3 9L9 8Z" />
+        </svg>
+      </div>
+    </header>
+
+    <!-- ==========================================================================
+         GRID: DADOS DO PERSONAGEM
+         ========================================================================== -->
+    <section class="character-info-grid">
+      <div class="form-group">
+        <label class="form-label" for="charName">
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          Nome do Personagem
+        </label>
+        <input type="text" id="charName" class="form-input" placeholder="Ex: Radu Bărbat, Miklós..." oninput="autoSave()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="charPlayer">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+          Jogador
+        </label>
+        <input type="text" id="charPlayer" class="form-input" placeholder="Seu nome..." oninput="autoSave()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+          Experiência (XP)
+        </label>
+        <div class="xp-box">
+          <div class="xp-counter-wrap">
+            <button class="mini-btn" onclick="adjustXP(-1)" title="Diminuir XP">-</button>
+            <span id="charXPDisplay" class="xp-val-display">0</span>
+            <button class="mini-btn" onclick="adjustXP(1)" title="Adicionar XP">+</button>
+          </div>
+          <button class="mini-btn" style="width: auto; padding: 0 8px; font-size: 11px;" onclick="openInterludeAdvanceModal()" title="Gastar 3 XP em Aprimoramento de Interlúdio">
+            3 XP ➔ Evoluir
+          </button>
+        </div>
+      </div>
+
+      <!-- LINHA 2: CONCEITO & ESPÉCIE/NATUREZA -->
+      <div class="form-group" style="grid-column: span 2;">
+        <label class="form-label" for="charConcept">
+          <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+          Conceito & Arquétipo
+        </label>
+        <input type="text" id="charConcept" class="form-input" placeholder="Ex: Herdeiro dos Caçadores, Erudita dos Oradores, Vampira Renegada..." oninput="autoSave()">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">
+          <svg viewBox="0 0 24 24"><path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"/></svg>
+          Natureza da Alma
+        </label>
+        <div class="nature-toggle-group">
+          <button type="button" class="nature-btn active" data-nature="humano" onclick="setSpecies('humano')">
+            ✝️ Humano
+          </button>
+          <button type="button" class="nature-btn" data-nature="dhampiro" onclick="setSpecies('dhampiro')">
+            🩸 Dhampir
+          </button>
+          <button type="button" class="nature-btn" data-nature="vampiro" onclick="setSpecies('vampiro')">
+            🦇 Vampiro
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         PAINEL DAS DUAS RESERVAS FUNDAMENTAIS (RESISTÊNCIA & ESPÍRITO/SANGUE)
+         ========================================================================== -->
+    <section class="reserves-section">
+
+      <!-- RESERVA 1: RESISTÊNCIA -->
+      <div class="reserve-card vitality-card">
+        <div class="reserve-header">
+          <div class="reserve-title">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="#ff4d5a">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            RESISTÊNCIA
+          </div>
+          <div class="reserve-numeric">
+            Atual: <b id="vitalityValDisplay" style="color:var(--gold-light); font-size:16px;">3</b> / 
+            Máx: <span id="vitalityMaxDisplay">3</span>
+          </div>
+        </div>
+
+        <div class="pips-container" id="vitalityPipsContainer">
+          <!-- Pips de Resistência gerados via JS -->
+        </div>
+        <div class="pips-hint">✦ Clique nos pontos para marcar dano ou cura</div>
+
+        <div class="reserve-info-block">
+          <p><span class="tag-trigger">✦ Gatilho:</span> Sofrer ataques inimigos ou dano narrativo severo (-1 ponto).</p>
+          <p><span class="tag-consequence">▣ Consequência ao Zerar:</span> <strong>Ferimento Grave</strong> (Incapacitado de combater; fugir, render-se ou receber ajuda).</p>
+        </div>
+
+        <!-- ALERTA DE FERIMENTO GRAVE QUANDO ZERADO -->
+        <div class="lethal-warning-badge" id="vitalityLethalWarning">
+          ⚠️ FERIMENTO GRAVE (▣): O personagem não pode continuar combatendo! Deve fugir, esconder-se, render-se ou receber ajuda!
+        </div>
+      </div>
+
+      <!-- RESERVA 2: ESPÍRITO OU SANGUE -->
+      <div class="reserve-card essence-card">
+        <div class="reserve-header">
+          <div class="reserve-title" id="essenceTitleLabel">
+            <svg viewBox="0 0 24 24" width="22" height="22" id="essenceTitleIcon" fill="var(--spirit-light)">
+              <path d="M12 2c1.1 0 2 .9 2 2 0 .74-.4 1.38-1 1.72v2.34c3.95.49 7 3.85 7 7.94 0 4.41-3.59 8-8 8s-8-3.59-8-8c0-4.09 3.05-7.45 7-7.94V5.72C8.4 5.38 8 4.74 8 4c0-1.1.9-2 2-2zm0 8c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
+            </svg>
+            <span id="essenceNameText">ESPÍRITO</span>
+          </div>
+          <div class="reserve-numeric">
+            Atual: <b id="essenceValDisplay" style="color:var(--gold-light); font-size:16px;">3</b> / 
+            Máx: <span id="essenceMaxDisplay">3</span>
+          </div>
+        </div>
+
+        <div class="pips-container" id="essencePipsContainer">
+          <!-- Pips de Espírito/Sangue gerados via JS -->
+        </div>
+        <div class="pips-hint">✦ Clique nos pontos para gastar ou restaurar</div>
+
+        <div class="reserve-info-block" id="essenceRulesDescription">
+          <p id="essenceTriggerLine"><span class="tag-trigger">✦ Gatilho:</span> Uso de Poder de Raça ou Determinação (+1d6).</p>
+          <p><span class="tag-consequence">▣ Consequência ao Zerar:</span> <strong>Esgotamento</strong> (Sem recursos; desvantagem narrativa imposta pelo Arquiteto).</p>
+        </div>
+
+        <!-- ALERTA DE ESGOTAMENTO QUANDO ZERADA -->
+        <div class="lethal-warning-badge" id="essenceLethalWarning">
+          ⚠️ ESGOTAMENTO (▣): Reserva zerada! Desvantagem narrativa e incapacidade de usar Determinação ou Poderes!
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==========================================================================
+         OS 7 FATOS INICIAIS (PREMISSAS DO MUNDO & FATOS LIVRES)
+         ========================================================================== -->
+    <section class="facts-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+          FATOS DO PERSONAGEM (SRD p. 10)
+        </h2>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" onclick="restoreAllRuptures()" title="Cura todas as rupturas no Interlúdio">
+            🌿 Restaurar Rupturas
+          </button>
+          <button class="btn" onclick="addNewCustomFact()" title="Adicionar novo fato via avanço">
+            + Novo Fato
+          </button>
+        </div>
+      </div>
+
+      <!-- GRUPO 1: PREMISSAS INICIAIS DO MUNDO -->
+      <div class="facts-category-title">
+        <span>⚔️ Premissas Iniciais de Castlevania (3 Fatos Obrigatórios)</span>
+      </div>
+
+      <div class="facts-list" id="worldPremisesList">
+        <!-- Fato 1 -->
+        <div class="fact-card" id="factCard-1">
+          <div class="fact-number-badge">I</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              🩸 Premissa 1: Sangue e Linhagem
+            </div>
+            <input type="text" class="fact-input" id="factInput-1" placeholder="Ex: Minha família descende dos Belmonts; Nascido sob a maldição dos Cárpatos..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-1" onclick="toggleRuptura(1)" title="Marcar Ruptura / Quebra do Fato (quando tira 1 no dado)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+
+        <!-- Fato 2 -->
+        <div class="fact-card" id="factCard-2">
+          <div class="fact-number-badge">II</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              ⚔️ Premissa 2: Experiência contra oponentes
+            </div>
+            <input type="text" class="fact-input" id="factInput-2" placeholder="Ex: Enfrentei dezenas de licantropos e prevejo suas investidas; Mestre no Chicote de Prata..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-2" onclick="toggleRuptura(2)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+
+        <!-- Fato 3 -->
+        <div class="fact-card" id="factCard-3">
+          <div class="fact-number-badge">III</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              🕯️ Premissa 3: Fardo Pessoal
+            </div>
+            <input type="text" class="fact-input" id="factInput-3" placeholder="Ex: 'Vi minha aldeia queimar em Csejte e nunca mais recuarei'..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-3" onclick="toggleRuptura(3)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRUPO 2: FATOS LIVRES ASSIMÉTRICOS POR RAÇA -->
+      <div class="facts-category-title" style="margin-top: 20px;">
+        <span id="freeFactsCategoryHeader">📜 Fatos Livres por Raça (Humano: +3 | Dhampiro: +2 | Vampiro: +4)</span>
+      </div>
+
+      <div class="facts-list" id="freeFactsList">
+        <!-- Fato 4 -->
+        <div class="fact-card" id="factCard-4">
+          <div class="fact-number-badge">IV</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              👁️ Fato Livre 1
+            </div>
+            <input type="text" class="fact-input" id="factInput-4" placeholder="Ex: Rastreia passos de predadores mesmo sobre pedras nuas..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-4" onclick="toggleRuptura(4)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+
+        <!-- Fato 5 -->
+        <div class="fact-card" id="factCard-5">
+          <div class="fact-number-badge">V</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              🛡️ Fato Livre 2
+            </div>
+            <input type="text" class="fact-input" id="factInput-5" placeholder="Ex: Sangue-frio inabalável diante de cadáveres reanimados..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-5" onclick="toggleRuptura(5)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+
+        <!-- Fato 6 (Humano e Vampiro) -->
+        <div class="fact-card" id="factCard-6">
+          <div class="fact-number-badge">VI</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              🕯️ Fato Livre 3 <span id="factSixBadge" style="font-size:11px; opacity:0.8;">(Humano e Vampiro)</span>
+            </div>
+            <input type="text" class="fact-input" id="factInput-6" placeholder="Ex: 'Nenhum monstro ditará quando eu devo sangrar'..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-6" onclick="toggleRuptura(6)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+
+        <!-- Fato 7 (Exclusivo Vampiro) -->
+        <div class="fact-card" id="factCard-7">
+          <div class="fact-number-badge">VII</div>
+          <div class="fact-content-wrap">
+            <div class="fact-premise-label">
+              🦇 Fato Livre 4 <span style="font-size:11px; opacity:0.8;">(Exclusivo Vampiro)</span>
+            </div>
+            <input type="text" class="fact-input" id="factInput-7" placeholder="Ex: Sabedoria secular sobre as criptas esquecidas e clãs da Transilvânia..." oninput="autoSave()">
+          </div>
+          <div class="fact-actions-wrap">
+            <button class="btn-ruptura" id="rupturaBtn-7" onclick="toggleRuptura(7)">
+              ⚡ Ruptura
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FATOS EXTRAS (EXPANDÍVEIS VIA XP) -->
+      <div class="facts-list" id="extraFactsContainer" style="margin-top: 12px;"></div>
+
+    </section>
+
+    <!-- ==========================================================================
+         PODERES DE RAÇA (ESPÍRITO / SANGUE)
+         ========================================================================== -->
+    <section class="relics-section">
+      <div class="section-title-wrap">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          PODERES DE RAÇA
+        </h2>
+        <span style="font-size:13px; color:var(--gold-dim);">Custo: 1 Ponto de Espírito ou Sangue</span>
+      </div>
+
+      <p style="font-size:13.5px; color:var(--text-muted); margin-bottom: 12px;">
+        ✦ <strong>Regra de Poderes:</strong> Cada ativação consome <strong>1 ponto da Reserva</strong> (Espírito ou Sangue). Poderes livres são definidos em conjunto com o Arquiteto e a mesa. Armas clássicas funcionam como Fatos na rolagem de risco.
+      </p>
+
+      <div class="relics-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+        <!-- Poder 1 -->
+        <div class="relic-card">
+          <div class="relic-card-header">
+            <input type="text" id="powerOneName" class="relic-name-input" value="Poder 1" oninput="autoSave()">
+          </div>
+          <div class="relic-rule-note">
+            <label class="form-label">Efeito:</label>
+            <textarea id="powerOneEffect" class="form-textarea" style="min-height: 60px; font-size:14px;" oninput="autoSave()"></textarea>
+          </div>
+          <button class="relic-activate-btn" onclick="activateRacePower(1)">
+            ⚡ Ativar Poder 1 (-1 Reserva)
+          </button>
+        </div>
+
+        <!-- Poder 2 -->
+        <div class="relic-card">
+          <div class="relic-card-header">
+            <input type="text" id="powerTwoName" class="relic-name-input" value="Poder 2" oninput="autoSave()">
+          </div>
+          <div class="relic-rule-note">
+            <label class="form-label">Efeito:</label>
+            <textarea id="powerTwoEffect" class="form-textarea" style="min-height: 60px; font-size:14px;" oninput="autoSave()"></textarea>
+          </div>
+          <button class="relic-activate-btn" onclick="activateRacePower(2)">
+            ⚡ Ativar Poder 2 (-1 Reserva)
+          </button>
+        </div>
+
+        <!-- Poder 3 -->
+        <div class="relic-card">
+          <div class="relic-card-header">
+            <input type="text" id="powerThreeName" class="relic-name-input" placeholder="Nome do Poder Livre..." value="Poder 3" oninput="autoSave()">
+          </div>
+          <div class="relic-rule-note">
+            <label class="form-label">Efeito Livre:</label>
+            <textarea id="powerThreeEffect" class="form-textarea" style="min-height: 60px; font-size:14px;" placeholder="Defina com o Arquiteto e o grupo o efeito narrativo..." oninput="autoSave()"></textarea>
+          </div>
+          <button class="relic-activate-btn" onclick="activateRacePower(3)">
+            ⚡ Ativar Poder 3 (-1 Reserva)
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         DIÁRIO DE CAÇADA, CICATRIZES & INVENTÁRIO
+         ========================================================================== -->
+    <section class="notes-section">
+      <div class="notes-box">
+        <label class="form-label">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+          Cicatrizes, Pecados & Maldições
+        </label>
+        <textarea id="charScarsNotes" class="notes-textarea" placeholder="Marcas deixadas pelas criaturas da noite, pactos de sangue, dívidas sombrias..." oninput="autoSave()"></textarea>
+      </div>
+
+      <div class="notes-box">
+        <label class="form-label">
+          <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+          Inventário & Relíquias de Csejte
+        </label>
+        <textarea id="charInventoryNotes" class="notes-textarea" placeholder="Estacas de freixo, frascos alquímicos, relíquias pilhadas do castelo, medalhões sagrados..." oninput="autoSave()"></textarea>
+      </div>
+    </section>
+
+  </div><!-- /sheet-wrapper -->
+
+  <!-- ==========================================================================
+       MOTOR DE DADOS 3D REAL & BARRA DE AÇÃO COMPACTA
+       ========================================================================== -->
+  <!-- OVERLAY TRANSPARENTE DE ROLAGEM 3D -->
+  <div id="dice-box-overlay" class="dice-box-overlay">
+    <canvas id="diceCanvas3D"></canvas>
+  </div>
+
+  <!-- BANNER DE RESULTADO NARRATIVO & CHIPS DE RUPTURA -->
+  <div class="roller-outcome-banner" id="rollerOutcomeBanner"></div>
+
+  <!-- BARRA DE AÇÃO COMPACTA DE RISCO FRACTAL -->
+  <aside class="dice-action-dock" id="diceActionDock" aria-label="Parada de Risco Fractal">
+    <div class="dock-title-group">
+      <span class="dock-gothic-icon">🎲</span>
+      <span class="dock-label">RISCO FRACTAL:</span>
+    </div>
+
+    <div class="dock-pool-selector" role="group" aria-label="Seleção de Fatos">
+      <button type="button" class="btn-dock-pool" data-dice="0" onclick="setDicePoolManual(0)">Sem Fato</button>
+      <button type="button" class="btn-dock-pool" data-dice="1" onclick="setDicePoolManual(1)">1 Fato</button>
+      <button type="button" class="btn-dock-pool active" data-dice="2" onclick="setDicePoolManual(2)">2 Fatos</button>
+      <button type="button" class="btn-dock-pool" data-dice="3" onclick="setDicePoolManual(3)">3 Fatos</button>
+    </div>
+
+    <label class="dock-toggle-chip" title="Gasta 1 de Espírito/Sangue ou usa Vantagem para +1d6 (teto 4d6)">
+      <input type="checkbox" id="advantageCheckbox" onchange="handleAdvantageToggle()">
+      <span>+1d6 Vantagem</span>
+    </label>
+
+    <button type="button" class="btn btn-primary btn-roll-dock" id="btnRoll3D" onclick="requestFractalRiskRoll()">
+      🎲 Rolar Dados
+    </button>
+
+    <button type="button" class="btn-clear-dock" id="btnClearDice" onclick="clearFractalDice()" title="Limpar dados e banner da tela" style="display: none;">
+      ✕ Limpar
+    </button>
+  </aside>
+
+  <!-- ==========================================================================
+       MODAL: DECLARAÇÃO / CONFIRMAÇÃO DE RISCO FRACTAL
+       ========================================================================== -->
+  <div class="roll-confirm-overlay" id="rollConfirmOverlay" onclick="if(event.target===this) closeRollConfirmModal()">
+    <div class="roll-confirm-card" role="dialog" aria-modal="true" aria-labelledby="rollConfirmTitle">
+      <div class="roll-confirm-header">
+        <span style="font-size: 22px;">⚔️</span>
+        <h3 class="roll-confirm-title" id="rollConfirmTitle">Declaração de Risco Fractal</h3>
+      </div>
+      <div id="rollConfirmBody"></div>
+      <label class="roll-confirm-checkbox-group">
+        <input type="checkbox" id="skipRollConfirmCheckbox">
+        <span>Não pedir confirmação nesta sessão</span>
+      </label>
+      <div class="roll-confirm-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeRollConfirmModal()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnExecuteConfirmedRoll" onclick="executeConfirmedRoll()">
+          🎲 Confirmar e Rolar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL: GRIMÓRIO DE REGRAS RÁPIDAS DO FRACTAL RPG
+       ========================================================================== -->
+  <div class="rules-modal-overlay" id="rulesModalOverlay" onclick="if(event.target===this) closeRulesModal()">
+    <div class="rules-modal-card">
+      <div class="rules-modal-header">
+        <h3 class="rules-modal-title">📖 GRIMÓRIO DE REGRAS — FRACTAL RPG (v1.0.3)</h3>
+        <button class="mini-btn" onclick="closeRulesModal()">✕</button>
+      </div>
+      <div class="rules-modal-body">
+        <h4>1. O Fluxo de Diálogo (SRD p. 9)</h4>
+        <p>O Arquiteto descreve o perigo e pergunta: <em>"O que vocês fazem?"</em>. Os jogadores declaram intenções. Se houver risco e consequências claras, ocorre a Rolagem de Risco.</p>
+
+        <h4>2. A Rolagem de Risco (SRD p. 10)</h4>
+        <ul>
+          <li><strong>Contar Fatos:</strong> Role 1d6 para cada Fato aplicável (máximo 3d6).</li>
+          <li><strong>5 ou 6 = SUCESSO:</strong> O personagem atinge seu objetivo.</li>
+          <li><strong>1 a 4 = FALHA:</strong> O personagem falha, o Arquiteto narra a Consequência e o personagem <strong>marca +1 XP</strong>.</li>
+          <li><strong>Dois ou mais 6 = IMPULSO / CRÍTICO:</strong> Sucesso heroico espetacular com bônus na cena!</li>
+          <li><strong>Qualquer dado tirou 1 = RUPTURA:</strong> Um dos Fatos utilizados fica <em>Quebrado</em> até o próximo Interlúdio!</li>
+          <li><strong>Sem Fatos:</strong> Se nenhum Fato se aplicar, rola-se apenas 1d6 e somente o resultado <strong>6</strong> é sucesso.</li>
+          <li><strong>Vantagem:</strong> Usar o ambiente ou ajuda de aliado dá +1d6 (podendo rolar até 4d6).</li>
+        </ul>
+
+        <h4>3. As Reservas de Jogo</h4>
+        <ul>
+          <li><strong>Resistência:</strong> Humano (3), Dhampiro (3), Vampiro (2). Zerou = <strong>Ferimento Grave</strong> (incapacitado de combater; fugir, render-se ou receber ajuda).</li>
+          <li><strong>Espírito (Humano 3/3):</strong> Consumido em Determinação (+1d6) ou Poderes. Recupera em Interlúdios ou ao expressar seu Fardo Pessoal.</li>
+          <li><strong>Sangue (Dhampiro/Vampiro 2/2):</strong> Consumido em Determinação (+1d6) ou Poderes. Recupera 1 ponto por humano drenado.</li>
+          <li><strong>Determinação:</strong> Gasta 1 Espírito ou Sangue para adicionar +1d6 (Vantagem) na rolagem com Fato aplicável (teto 4d6).</li>
+        </ul>
+
+        <h4>4. Cenas de Interlúdio & Descanso (SRD p. 15)</h4>
+        <p>Todos os Fatos Quebrados por resultados 1 são restaurados automaticamente. Cada herói escolhe 2 ações:</p>
+        <ul>
+          <li><strong>Descansar:</strong> Recupera 1 ponto de Resistência ou Espírito/Sangue.</li>
+          <li><strong>Evoluir (3 XP):</strong> Escreve um novo Fato permanente na ficha.</li>
+          <li><strong>Aprimorar (3 XP):</strong> Aumenta em +1 o teto máximo de Resistência ou Espírito/Sangue (teto máximo 6).</li>
+          <li><strong>Mudar:</strong> Reescreve um Fato existente para refletir nova fase da história.</li>
+          <li><strong>Preparar-se:</strong> Ganha +1 XP imediato.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST DE FEEDBACK -->
+  <div class="toast-msg" id="toastMessage">Ficha salva com sucesso!</div>
+
+  <!-- ==========================================================================
+       SCRIPTS JAVASCRIPT: LÓGICA COMPLETA & REATIVIDADE
+       ========================================================================== -->
+  <script>
+    // ESTADO REATIVO DA FICHA
+    const sheetData = {
+      name: '',
+      player: '',
+      concept: '',
+      species: 'humano', // humano, dhampiro, vampiro
+      xp: 0,
+      vitality: 3,
+      vitalityMax: 3,
+      essence: 3,
+      essenceMax: 3,
+      facts: {
+        1: { text: '', broken: false },
+        2: { text: '', broken: false },
+        3: { text: '', broken: false },
+        4: { text: '', broken: false },
+        5: { text: '', broken: false },
+        6: { text: '', broken: false },
+        7: { text: '', broken: false }
+      },
+      extraFacts: [],
+      powers: {
+        1: { name: 'Cântico Sagrado de Exorcismo', effect: 'Gasta 1 Espírito para repelir espíritos menores, vampiros ou quebrar feitiços sombrios.' },
+        2: { name: 'Treinamento Alquímico Belmont', effect: 'Gasta 1 Espírito para desferir golpe mortal no ponto fraco com armas de prata ou óleo sagrado.' },
+        3: { name: 'Fé Ardente & Liderança', effect: 'Gasta 1 Espírito para inspirar aliados e anular pavor sobrenatural.' }
+      },
+      scars: '',
+      inventory: ''
+    };
+
+    // DADOS PRONTOS DOS 4 HERÓIS DE EXEMPLO
+    const PRESET_HEROES = {
+      radu: {
+        name: "Radu Bărbat",
+        player: "Exemplo",
+        concept: "O Caçador da Floresta (Linhagem Secreta)",
+        species: "humano",
+        xp: 0,
+        vitality: 3,
+        vitalityMax: 3,
+        essence: 3,
+        essenceMax: 3,
+        facts: {
+          1: { text: "Descendente legítimo da clã Bărbat, guardiões do pacto de caça dos Cárpatos.", broken: false },
+          2: { text: "Caçador veterano especialista em emboscar carniçais e quebrar o avanço de bestas com o Chicote de Prata.", broken: false },
+          3: { text: "'Vi minha aldeia inteira arder nos fogos dos inquisidores de Báthory e recuso-me a falhar novamente.'", broken: false },
+          4: { text: "Mestre no manejo de punhais abençoados e água benta consagrada.", broken: false },
+          5: { text: "Rastreia presas nas pedras nuas sob nevascas intensas.", broken: false },
+          6: { text: "'Nunca recuo enquanto houver um inocente atrás de mim.'", broken: false }
+        },
+        powers: {
+          1: { name: "Chicote Relâmpago", effect: "Gasta 1 Espírito para que o chicote atinja inimigos múltiplos ou desarme um adversário à distância com precisão cirúrgica." },
+          2: { name: "Fé Inabalável", effect: "Gasta 1 Espírito para ignorar o terror sobrenatural de vampiros ancestrais e dissipar ilusões mentais imediatas." },
+          3: { name: "Fôlego de Caçador", effect: "Gasta 1 Espírito para realizar uma manobra atlética extrema sem sofrer penalidade de exaustão." }
+        },
+        scars: "Cicatriz de garras no peito recebida na queima de sua aldeia.",
+        inventory: "Chicote de prata, 3 adagas bentas, cantil de vinho consagrado, medalhão familiar."
+      },
+      elena: {
+        name: "Elena dos Oradores",
+        player: "Exemplo",
+        concept: "Conjuradora Elemental & Erudita Nômade",
+        species: "humano",
+        xp: 0,
+        vitality: 3,
+        vitalityMax: 3,
+        essence: 3,
+        essenceMax: 3,
+        facts: {
+          1: { text: "Oradora iniciada no dialeto arcano e cânticos protetores de sua tribo.", broken: false },
+          2: { text: "Conjuradora experiente que usa os Três Fogos Elementais (chama azul, gelo místico e choque) contra criaturas da noite.", broken: false },
+          3: { text: "'Minha mentora foi capturada para os rituais de sangue de Báthory; libertá-la é minha missão de vida.'", broken: false },
+          4: { text: "Porta um tomo de couro contendo runas de banimento e círculos de proteção.", broken: false },
+          5: { text: "Sentidos treinados para farejar auras profanas e armadilhas mecânicas.", broken: false },
+          6: { text: "Conhecedora profunda de latim, dialetos magiares e manuscritos herméticos.", broken: false }
+        },
+        powers: {
+          1: { name: "Chama Purificadora", effect: "Gasta 1 Espírito para erguer instantaneamente uma barreira de chamas sagradas azuis intransponível para monstros menores." },
+          2: { name: "Lança de Gelo Místico", effect: "Gasta 1 Espírito para congelar armas, mecanismos de armadilha ou membros de bestas momentaneamente." },
+          3: { name: "Palavra de Firmeza", effect: "Gasta 1 Espírito para quebrar paralisia mágica ou sono forçado em si mesma ou em aliado ao toque." }
+        },
+        scars: "Queimadura rúnica na palma da mão esquerda.",
+        inventory: "Grimório de cânticos, frascos de reagentes de prata, manto de seda encantada."
+      },
+      miklos: {
+        name: "Miklós",
+        player: "Exemplo",
+        concept: "O Dhampiro Solitário (Herdeiro de Dois Mundos)",
+        species: "dhampiro",
+        xp: 0,
+        vitality: 3,
+        vitalityMax: 3,
+        essence: 2,
+        essenceMax: 2,
+        facts: {
+          1: { text: "Filho híbrido do crepúsculo; imune ao dano solar e com olhos dourados que penetram a escuridão.", broken: false },
+          2: { text: "Duelista ágil treinado para aparar investidas rápidas de vampiros com sua rapieira de prata estelar.", broken: false },
+          3: { text: "'Minha mãe foi executada no castelo por ter se deitado com um humano; destruirei a nobreza de Csejte.'", broken: false },
+          4: { text: "Acrobata furtivo capaz de escalar muros verticais e saltar abismos sem esforço aparente.", broken: false },
+          5: { text: "'Nenhum monstro ditará quando eu devo sangrar.'", broken: false }
+        },
+        powers: {
+          1: { name: "Super velocidade (Inato)", effect: "Gasta 1 Sangue para mover-se num piscar de olhos, desviar de ataques físicos inevitáveis ou quebrar iniciativa em cena." },
+          2: { name: "Sentidos Predatórios", effect: "Gasta 1 Sangue para escutar batimentos cardíacos através de paredes ou farejar sangue fresco a quilômetros." },
+          3: { name: "Reflexos do Crepúsculo", effect: "Gasta 1 Sangue para saltar abismos impossíveis ou escalar muros de pedra lisa sem ruído." }
+        },
+        scars: "Marca em brasa com o brasão de Báthory no ombro direito.",
+        inventory: "Rapieira de prata estelar, anel de rubi de sua mãe, kit de afiação."
+      },
+      vespera: {
+        name: "Condessa Vespera de Corvin",
+        player: "Exemplo",
+        concept: "A Vampira Renegada da Casa Corvin",
+        species: "vampiro",
+        xp: 0,
+        vitality: 2,
+        vitalityMax: 2,
+        essence: 2,
+        essenceMax: 2,
+        facts: {
+          1: { text: "Matriarca do outrora orgulhoso clã Corvin dos Cárpatos, imortal e temida pelos senhores da noite.", broken: false },
+          2: { text: "Séculos de combate sangrento contra inquisidores e usurpadores da corte vampírica.", broken: false },
+          3: { text: "'A tirania canibal de Elizabeth manchou a dignidade da imortalidade; beberei seu sangue até a última gota.'", broken: false },
+          4: { text: "Garras afiadas capazes de rasgar armaduras de placas e estilhaçar pedras.", broken: false },
+          5: { text: "Presença aristocrática esmagadora que intimida soldados e nobres mortais.", broken: false },
+          6: { text: "Sabedoria de séculos sobre as passagens secretas e criptas esquecidas da Transilvânia.", broken: false },
+          7: { text: "'A dor é uma lição que meus inimigos aprendem depressa demais.'", broken: false }
+        },
+        powers: {
+          1: { name: "Regeneração Sanguínea (Inato)", effect: "Gasta 1 Sangue para reconstituir carne e osso sobrenaturalmente, curando 1 Resistência ferida." },
+          2: { name: "Metamorfose em Névoa Sombria", effect: "Gasta 1 Sangue para dissolver seu corpo em névoa espessa por alguns instantes, atravessando frestas ou grades." },
+          3: { name: "Presença Predatória Dominadora", effect: "Gasta 1 Sangue para subjugar a vontade de mortais ou paralisar oponentes com aura de majestade profana." }
+        },
+        scars: "Palidez marmórea e presas afiadas.",
+        inventory: "Joias antigas da Casa Corvin, vestido de luto nobre em veludo negro."
+      }
+    };
+
+    // INICIALIZAÇÃO
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedData();
+      renderPips();
+      updateSpeciesUI();
+      updateWarnings();
+      updateDicePoolDisplay();
+
+      // Inicializa pré-carregamento do motor 3D
+      if (typeof FractalRollSystem !== 'undefined' && FractalRollSystem.init) {
+        FractalRollSystem.init().catch(err => console.warn('[FractalRollSystem] Preload warning:', err));
+      }
+
+      // Detecção de ambiente embutido e inicialização da ponte Owlbear Rodeo
+      if (typeof owlbearBridge !== 'undefined' && owlbearBridge) {
+        owlbearBridge.init().then(() => {
+          const env = owlbearBridge.detectEnvironment();
+          updateVttUI(env);
+        }).catch(err => console.warn('[OwlbearBridge] Init warning:', err));
+
+        // Escuta em tempo real rolagens de outros jogadores na mesa virtual
+        owlbearBridge.onReceiveBroadcast((event) => {
+          if (event && event.character && event.character !== (sheetData.name || 'Herói Desconhecido')) {
+            const diceList = Array.isArray(event.results) ? event.results.join(', ') : '';
+            const rup = event.ruptureApplies ? ' 🩸 Ruptura!' : '';
+            showToast(`🦉 ${event.character} rolou [ ${diceList} ] — ${event.outcome}!${rup}`);
+          }
+        });
+      } else if (window.self !== window.top) {
+        document.body.classList.add('mode-vtt-compact');
+      }
+
+      // Clique no overlay após repouso para limpar os dados
+      const diceOverlay = document.getElementById('dice-box-overlay');
+      if (diceOverlay) {
+        diceOverlay.addEventListener('click', () => {
+          if (typeof FractalRollSystem !== 'undefined' && !FractalRollSystem.isRolling) {
+            clearFractalDice();
+          }
+        });
+      }
+    });
+
+    // RENDERIZAR PIPS INTERATIVOS
+    function renderPips() {
+      // Resistência
+      const vitContainer = document.getElementById('vitalityPipsContainer');
+      vitContainer.innerHTML = '';
+      for (let i = 1; i <= sheetData.vitalityMax; i++) {
+        const pip = document.createElement('div');
+        pip.className = `pip pip-vitality ${i <= sheetData.vitality ? 'filled' : ''}`;
+        pip.title = `Resistência: ${i} / ${sheetData.vitalityMax}`;
+        pip.onclick = () => setVitality(i === sheetData.vitality ? i - 1 : i);
+        pip.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+        vitContainer.appendChild(pip);
+      }
+      document.getElementById('vitalityValDisplay').textContent = sheetData.vitality;
+      document.getElementById('vitalityMaxDisplay').textContent = sheetData.vitalityMax;
+
+      // Espírito ou Sangue
+      const essContainer = document.getElementById('essencePipsContainer');
+      essContainer.innerHTML = '';
+      for (let i = 1; i <= sheetData.essenceMax; i++) {
+        const pip = document.createElement('div');
+        pip.className = `pip pip-essence ${i <= sheetData.essence ? 'filled' : ''}`;
+        pip.title = `${sheetData.species === 'humano' ? 'Espírito' : 'Sangue'}: ${i} / ${sheetData.essenceMax}`;
+        pip.onclick = () => setEssence(i === sheetData.essence ? i - 1 : i);
+        pip.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 2c1.1 0 2 .9 2 2 0 .74-.4 1.38-1 1.72v2.34c3.95.49 7 3.85 7 7.94 0 4.41-3.59 8-8 8s-8-3.59-8-8c0-4.09 3.05-7.45 7-7.94V5.72C8.4 5.38 8 4.74 8 4c0-1.1.9-2 2-2z"/></svg>`;
+        essContainer.appendChild(pip);
+      }
+      document.getElementById('essenceValDisplay').textContent = sheetData.essence;
+      document.getElementById('essenceMaxDisplay').textContent = sheetData.essenceMax;
+
+      updateWarnings();
+    }
+
+    // AJUSTES DE RESERVA
+    function setVitality(val) {
+      sheetData.vitality = Math.max(0, Math.min(sheetData.vitalityMax, val));
+      renderPips();
+      autoSave();
+    }
+    function damageVitality(amount = 1) {
+      sheetData.vitality = Math.max(0, sheetData.vitality - amount);
+      renderPips();
+      showToast(`Sofreu ${amount} de dano! Resistência: ${sheetData.vitality}`);
+      autoSave();
+    }
+    function healVitality(amount = 1) {
+      sheetData.vitality = Math.min(sheetData.vitalityMax, sheetData.vitality + amount);
+      renderPips();
+      showToast(`Recuperou ${amount} de Resistência! Atual: ${sheetData.vitality}`);
+      autoSave();
+    }
+
+    function setEssence(val) {
+      sheetData.essence = Math.max(0, Math.min(sheetData.essenceMax, val));
+      renderPips();
+      autoSave();
+    }
+    function recoverEssence(amount = 1) {
+      sheetData.essence = Math.min(sheetData.essenceMax, sheetData.essence + amount);
+      renderPips();
+      showToast(`Restaurou ${amount} de ${sheetData.species === 'humano' ? 'Espírito' : 'Sangue'}! Atual: ${sheetData.essence}`);
+      autoSave();
+    }
+
+    function feedBlood() {
+      if (sheetData.species === 'humano') return;
+      if (sheetData.essence >= sheetData.essenceMax) {
+        showToast('Reserva de Sangue já está cheia!');
+        return;
+      }
+      sheetData.essence += 1;
+      renderPips();
+      showToast('🩸 Drenou sangue de um humano (+1 Sangue recuperado)!');
+      autoSave();
+    }
+
+    // USOS DE PODER E DETERMINAÇÃO
+    function spendEssenceForAdvantage() {
+      if (sheetData.essence <= 0) {
+        showToast('⚠️ Reserva esgotada! Em estado de Esgotamento.');
+        return;
+      }
+      sheetData.essence -= 1;
+      renderPips();
+      document.getElementById('advantageCheckbox').checked = true;
+      updateDicePoolDisplay();
+      showToast('⚡ Determinação ativada: +1d6 de Vantagem adicionado!');
+      autoSave();
+    }
+
+    function triggerSpeciesPowerOne() {
+      if (sheetData.species === 'vampiro') {
+        if (sheetData.essence <= 0) {
+          showToast('⚠️ Sangue esgotado!');
+          return;
+        }
+        if (sheetData.vitality >= sheetData.vitalityMax) {
+          showToast('Resistência já está no máximo!');
+          return;
+        }
+        sheetData.essence -= 1;
+        healVitality(1);
+        renderPips();
+        showToast('🩸 Poder Vampírico: Gastou 1 Sangue e regenerou 1 Resistência!');
+        autoSave();
+      } else if (sheetData.species === 'dhampiro') {
+        activateRacePower(1);
+      } else {
+        spendEssenceForAdvantage();
+      }
+    }
+
+    function activateRacePower(slot) {
+      if (sheetData.essence <= 0) {
+        showToast('⚠️ Reserva esgotada! Não pode ativar poderes.');
+        return;
+      }
+
+      if (slot === 1 && sheetData.species === 'vampiro') {
+        triggerSpeciesPowerOne();
+        return;
+      }
+
+      sheetData.essence -= 1;
+      renderPips();
+
+      let pName = '';
+      if (slot === 1) pName = document.getElementById('powerOneName').value;
+      else if (slot === 2) pName = document.getElementById('powerTwoName').value;
+      else if (slot === 3) pName = document.getElementById('powerThreeName').value;
+
+      if (pName.includes('Determinação')) {
+        document.getElementById('advantageCheckbox').checked = true;
+        updateDicePoolDisplay();
+        showToast('⚡ Determinação ativada: +1d6 de Vantagem na rolagem!');
+      } else {
+        showToast(`⚡ Poder Ativado: ${pName || 'Poder ' + slot} (-1 Reserva gasto)`);
+      }
+      autoSave();
+    }
+
+    // ATUALIZAR ALERTAS DE PERIGO
+    function updateWarnings() {
+      const vitWarn = document.getElementById('vitalityLethalWarning');
+      const essWarn = document.getElementById('essenceLethalWarning');
+      if (sheetData.vitality === 0) vitWarn.classList.add('active');
+      else vitWarn.classList.remove('active');
+
+      if (sheetData.essence === 0) essWarn.classList.add('active');
+      else essWarn.classList.remove('active');
+    }
+
+    // ALTERNAR ESPÉCIE / NATUREZA
+    function setSpecies(nature, applyDefaults = false) {
+      sheetData.species = nature;
+      document.querySelectorAll('.nature-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.nature === nature);
+      });
+      document.body.classList.remove('nature-humano', 'nature-dhampir', 'nature-vampire');
+      if (nature === 'humano') document.body.classList.add('nature-humano');
+      if (nature === 'dhampiro') document.body.classList.add('nature-dhampir');
+      if (nature === 'vampiro') document.body.classList.add('nature-vampire');
+
+      if (applyDefaults) {
+        if (nature === 'humano') {
+          sheetData.vitalityMax = 3;
+          sheetData.vitality = 3;
+          sheetData.essenceMax = 3;
+          sheetData.essence = 3;
+          document.getElementById('powerOneName').value = 'Cântico Sagrado de Exorcismo';
+          document.getElementById('powerOneEffect').value = 'Gasta 1 Espírito para repelir espíritos menores, vampiros ou quebrar feitiços sombrios.';
+          document.getElementById('powerTwoName').value = 'Treinamento Alquímico Belmont';
+          document.getElementById('powerTwoEffect').value = 'Gasta 1 Espírito para desferir golpe mortal no ponto fraco com armas de prata ou óleo sagrado.';
+          document.getElementById('powerThreeName').value = 'Fé Ardente & Liderança';
+          document.getElementById('powerThreeEffect').value = 'Gasta 1 Espírito para inspirar aliados e anular pavor sobrenatural.';
+        } else if (nature === 'dhampiro') {
+          sheetData.vitalityMax = 3;
+          sheetData.vitality = 3;
+          sheetData.essenceMax = 2;
+          sheetData.essence = 2;
+          document.getElementById('powerOneName').value = 'Super velocidade (Inato)';
+          document.getElementById('powerOneEffect').value = 'Gasta 1 Sangue para mover-se num piscar de olhos, desviar de golpe inevitável ou agir primeiro.';
+          document.getElementById('powerTwoName').value = 'Sentidos Predatórios';
+          document.getElementById('powerTwoEffect').value = 'Gasta 1 Sangue para escutar batimentos cardíacos através de paredes ou farejar sangue fresco a quilômetros.';
+          document.getElementById('powerThreeName').value = 'Reflexos do Crepúsculo';
+          document.getElementById('powerThreeEffect').value = 'Gasta 1 Sangue para saltar abismos impossíveis ou escalar muros de pedra lisa sem ruído.';
+        } else if (nature === 'vampiro') {
+          sheetData.vitalityMax = 2;
+          sheetData.vitality = 2;
+          sheetData.essenceMax = 2;
+          sheetData.essence = 2;
+          document.getElementById('powerOneName').value = 'Regeneração Sanguínea (Inato)';
+          document.getElementById('powerOneEffect').value = 'Gasta 1 Sangue para reconstituir carne e osso sobrenaturalmente, curando 1 Resistência ferida.';
+          document.getElementById('powerTwoName').value = 'Metamorfose em Névoa Sombria';
+          document.getElementById('powerTwoEffect').value = 'Gasta 1 Sangue para dissolver seu corpo em névoa espessa por alguns instantes, atravessando frestas ou grades.';
+          document.getElementById('powerThreeName').value = 'Presença Predatória Dominadora';
+          document.getElementById('powerThreeEffect').value = 'Gasta 1 Sangue para subjugar a vontade de mortais ou paralisar oponentes com aura de majestade profana.';
+        }
+      }
+
+      updateSpeciesUI();
+      renderPips();
+      autoSave();
+    }
+
+    function updateSpeciesUI() {
+      const isHuman = sheetData.species === 'humano';
+      const isDhampir = sheetData.species === 'dhampiro';
+      const isVampire = sheetData.species === 'vampiro';
+
+      const nameText = document.getElementById('essenceNameText');
+      const rulesDesc = document.getElementById('essenceTriggerLine');
+
+      if (isHuman) {
+        nameText.textContent = 'ESPÍRITO';
+        rulesDesc.innerHTML = '<span class="tag-trigger">✦ Gatilho:</span> Uso de Poder de Espírito ou <strong>Determinação</strong> (+1d6). Recupera em Interlúdio ou ao expressar seu Fardo.';
+      } else {
+        nameText.textContent = 'SANGUE';
+        rulesDesc.innerHTML = '<span class="tag-trigger">✦ Gatilho:</span> Uso de Poder de Sangue ou <strong>Determinação</strong> (+1d6). Recupera 1 ponto por humano drenado.';
+      }
+
+      // Visibilidade dos Fatos Livres conforme a raça
+      const card6 = document.getElementById('factCard-6');
+      const card7 = document.getElementById('factCard-7');
+      const headerTitle = document.getElementById('freeFactsCategoryHeader');
+
+      if (isDhampir) {
+        if (card6) card6.style.display = 'none';
+        if (card7) card7.style.display = 'none';
+        if (headerTitle) headerTitle.textContent = '📜 Fatos Livres (Dhampiro: +2 Fatos Livres — Total: 5 Fatos)';
+      } else if (isHuman) {
+        if (card6) card6.style.display = 'flex';
+        if (card7) card7.style.display = 'none';
+        if (headerTitle) headerTitle.textContent = '📜 Fatos Livres (Humano: +3 Fatos Livres — Total: 6 Fatos)';
+      } else {
+        if (card6) card6.style.display = 'flex';
+        if (card7) card7.style.display = 'flex';
+        if (headerTitle) headerTitle.textContent = '📜 Fatos Livres (Vampiro: +4 Fatos Livres — Total: 7 Fatos)';
+      }
+    }
+
+    // CONTROLE DE XP
+    function adjustXP(delta) {
+      sheetData.xp = Math.max(0, sheetData.xp + delta);
+      document.getElementById('charXPDisplay').textContent = sheetData.xp;
+      autoSave();
+    }
+
+    // RUPTURA DE FATOS
+    function toggleRuptura(factNum) {
+      if (!sheetData.facts[factNum]) sheetData.facts[factNum] = { text: '', broken: false };
+      sheetData.facts[factNum].broken = !sheetData.facts[factNum].broken;
+
+      const card = document.getElementById(`factCard-${factNum}`);
+      const btn = document.getElementById(`rupturaBtn-${factNum}`);
+      if (card && btn) {
+        card.classList.toggle('fact-broken', sheetData.facts[factNum].broken);
+        btn.classList.toggle('active', sheetData.facts[factNum].broken);
+      }
+      if (typeof updateDicePoolDisplay === 'function') {
+        updateDicePoolDisplay();
+      }
+      autoSave();
+    }
+
+    function restoreAllRuptures() {
+      for (const k in sheetData.facts) {
+        sheetData.facts[k].broken = false;
+        const card = document.getElementById(`factCard-${k}`);
+        const btn = document.getElementById(`rupturaBtn-${k}`);
+        if (card) card.classList.remove('fact-broken');
+        if (btn) btn.classList.remove('active');
+      }
+      showToast('🌿 Interlúdio: Todos os Fatos Quebrados foram restaurados!');
+      autoSave();
+    }
+
+    // ==========================================================================
+    // MOTOR DE DADOS 3D WEBGL NATIVO & SEAM DE ROLAGEM FRACTAL
+    // ==========================================================================
+    const GOTHIC_PALETTE = {
+      crimson: '#8b1525',
+      bloodDark: '#7a101c',
+      holyGold: '#c49a2a',
+      onyx: '#18141f',
+      parchmentInk: '#2e1c14'
+    };
+
+    // Matemática 3D
+    function mat4Create() {
+      const out = new Float32Array(16);
+      out[0] = 1; out[5] = 1; out[10] = 1; out[15] = 1;
+      return out;
+    }
+
+    function mat4LookAt(out, eye, center, up) {
+      let x0, x1, x2, y0, y1, y2, z0, z1, z2, len;
+      const eyex = eye[0], eyey = eye[1], eyez = eye[2];
+      const upx = up[0], upy = up[1], upz = up[2];
+      const centerx = center[0], centery = center[1], centerz = center[2];
+
+      z0 = eyex - centerx; z1 = eyey - centery; z2 = eyez - centerz;
+      len = Math.hypot(z0, z1, z2);
+      if (len === 0) { z2 = 1; } else { z0 /= len; z1 /= len; z2 /= len; }
+
+      x0 = upy * z2 - upz * z1;
+      x1 = upz * z0 - upx * z2;
+      x2 = upx * z1 - upy * z0;
+      len = Math.hypot(x0, x1, x2);
+      if (len === 0) { x0 = 0; x1 = 0; x2 = 0; } else { x0 /= len; x1 /= len; x2 /= len; }
+
+      y0 = z1 * x2 - z2 * x1;
+      y1 = z2 * x0 - z0 * x2;
+      y2 = z0 * x1 - z1 * x0;
+
+      out[0] = x0; out[1] = y0; out[2] = z0; out[3] = 0;
+      out[4] = x1; out[5] = y1; out[6] = z1; out[7] = 0;
+      out[8] = x2; out[9] = y2; out[10] = z2; out[11] = 0;
+      out[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+      out[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+      out[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+      out[15] = 1;
+      return out;
+    }
+
+    function mat4Perspective(out, fovy, aspect, near, far) {
+      const f = 1.0 / Math.tan(fovy / 2);
+      out[0] = f / aspect; out[1] = 0; out[2] = 0; out[3] = 0;
+      out[4] = 0; out[5] = f; out[6] = 0; out[7] = 0;
+      out[8] = 0; out[9] = 0; out[10] = (far + near) / (near - far); out[11] = -1;
+      out[12] = 0; out[13] = 0; out[14] = (2 * far * near) / (near - far); out[15] = 0;
+      return out;
+    }
+
+    function mat4Multiply(out, a, b) {
+      const a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
+      const a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
+      const a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+      const a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+      let b0 = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
+      out[0] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[1] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[2] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[3] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[4]; b1 = b[5]; b2 = b[6]; b3 = b[7];
+      out[4] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[5] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[6] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[7] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[8]; b1 = b[9]; b2 = b[10]; b3 = b[11];
+      out[8] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[9] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[10] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[11] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[12]; b1 = b[13]; b2 = b[14]; b3 = b[15];
+      out[12] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[13] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[14] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[15] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      return out;
+    }
+
+    function quatFromAxisAngle(axis, rad) {
+      const half = rad / 2;
+      const s = Math.sin(half);
+      return [axis[0] * s, axis[1] * s, axis[2] * s, Math.cos(half)];
+    }
+
+    function quatMultiply(out, a, b) {
+      const ax = a[0], ay = a[1], az = a[2], aw = a[3];
+      const bx = b[0], by = b[1], bz = b[2], bw = b[3];
+      out[0] = ax * bw + aw * bx + ay * bz - az * by;
+      out[1] = ay * bw + aw * by + az * bx - ax * bz;
+      out[2] = az * bw + aw * bz + ax * by - ay * bx;
+      out[3] = aw * bw - ax * bx - ay * by - az * bz;
+      return out;
+    }
+
+    function quatNormalize(q) {
+      const len = Math.hypot(q[0], q[1], q[2], q[3]) || 1;
+      q[0] /= len; q[1] /= len; q[2] /= len; q[3] /= len;
+      return q;
+    }
+
+    function quatSlerp(out, a, b, t) {
+      let ax = a[0], ay = a[1], az = a[2], aw = a[3];
+      let bx = b[0], by = b[1], bz = b[2], bw = b[3];
+      let cosom = ax * bx + ay * by + az * bz + aw * bw;
+      if (cosom < 0) {
+        cosom = -cosom;
+        bx = -bx; by = -by; bz = -bz; bw = -bw;
+      }
+      let scale0, scale1;
+      if (1.0 - cosom > 0.0001) {
+        const omega = Math.acos(cosom);
+        const sinom = Math.sin(omega);
+        scale0 = Math.sin((1.0 - t) * omega) / sinom;
+        scale1 = Math.sin(t * omega) / sinom;
+      } else {
+        scale0 = 1.0 - t;
+        scale1 = t;
+      }
+      out[0] = scale0 * ax + scale1 * bx;
+      out[1] = scale0 * ay + scale1 * by;
+      out[2] = scale0 * az + scale1 * bz;
+      out[3] = scale0 * aw + scale1 * bw;
+      return quatNormalize(out);
+    }
+
+    function mat4FromRotationTranslation(out, q, v) {
+      const x = q[0], y = q[1], z = q[2], w = q[3];
+      const x2 = x + x, y2 = y + y, z2 = z + z;
+      const xx = x * x2, xy = x * y2, xz = x * z2;
+      const yy = y * y2, yz = y * z2, zz = z * z2;
+      const wx = w * x2, wy = w * y2, wz = w * z2;
+      out[0] = 1 - (yy + zz); out[1] = xy + wz; out[2] = xz - wy; out[3] = 0;
+      out[4] = xy - wz; out[5] = 1 - (xx + zz); out[6] = yz + wx; out[7] = 0;
+      out[8] = xz + wy; out[9] = yz - wx; out[10] = 1 - (xx + yy); out[11] = 0;
+      out[12] = v[0]; out[13] = v[1]; out[14] = v[2]; out[15] = 1;
+      return out;
+    }
+
+    function rotateVec3ByQuat(out, v, q) {
+      const qx = q[0], qy = q[1], qz = q[2], qw = q[3];
+      const vx = v[0], vy = v[1], vz = v[2];
+      const ix = qw * vx + qy * vz - qz * vy;
+      const iy = qw * vy + qz * vx - qx * vz;
+      const iz = qw * vz + qx * vy - qy * vx;
+      const iw = -qx * vx - qy * vy - qz * vz;
+      out[0] = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+      out[1] = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+      out[2] = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+      return out;
+    }
+
+    function quatFromTwoVectors(u, v) {
+      const dot = u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
+      if (dot >= 0.999999) return [0, 0, 0, 1];
+      if (dot <= -0.999999) {
+        let axis = [1, 0, 0];
+        if (Math.abs(u[0]) > 0.9) axis = [0, 0, 1];
+        const ortho = [
+          u[1] * axis[2] - u[2] * axis[1],
+          u[2] * axis[0] - u[0] * axis[2],
+          u[0] * axis[1] - u[1] * axis[0]
+        ];
+        const len = Math.hypot(ortho[0], ortho[1], ortho[2]) || 1;
+        return [ortho[0] / len, ortho[1] / len, ortho[2] / len, 0];
+      }
+      const cross = [
+        u[1] * v[2] - u[2] * v[1],
+        u[2] * v[0] - u[0] * v[2],
+        u[0] * v[1] - u[1] * v[0]
+      ];
+      return quatNormalize([cross[0], cross[1], cross[2], 1.0 + dot]);
+    }
+
+    // Snapping exato para face plana com alinhamento de inclinação mínima (zero giro/snap de yaw)
+    function computeSnappedFlatOrientation(q) {
+      const faces = [
+        { val: 1, norm: [0, 1, 0] },
+        { val: 6, norm: [0, -1, 0] },
+        { val: 2, norm: [0, 0, 1] },
+        { val: 5, norm: [0, 0, -1] },
+        { val: 3, norm: [1, 0, 0] },
+        { val: 4, norm: [-1, 0, 0] }
+      ];
+
+      let bestFace = faces[0];
+      let maxDot = -Infinity;
+      const bestWorldNorm = [0, 0, 0];
+
+      for (const f of faces) {
+        const curNorm = rotateVec3ByQuat([0, 0, 0], f.norm, q);
+        if (curNorm[1] > maxDot) {
+          maxDot = curNorm[1];
+          bestFace = f;
+          bestWorldNorm[0] = curNorm[0];
+          bestWorldNorm[1] = curNorm[1];
+          bestWorldNorm[2] = curNorm[2];
+        }
+      }
+
+      // qAlign é a menor rotação no espaço global que alinha a normal da face superior com [0, 1, 0].
+      // Ajusta APENAS a inclinação residual (tilt de poucos graus), sem alterar o heading/yaw do dado.
+      const qAlign = quatFromTwoVectors(bestWorldNorm, [0, 1, 0]);
+      const out = quatNormalize(quatMultiply([0, 0, 0, 1], qAlign, q));
+
+      return {
+        targetQuat: out,
+        faceValue: bestFace.val
+      };
+    }
+
+    function createCubeData(size = 0.9) {
+      const s = size / 2;
+      const positions = [];
+      const normals = [];
+      const uvs = [];
+      const indices = [];
+
+      function faceUV(faceIdx) {
+        const col = (faceIdx - 1) % 3;
+        const row = Math.floor((faceIdx - 1) / 3);
+        const u0 = col / 3.0;
+        const u1 = (col + 1) / 3.0;
+        const v0 = row / 2.0;
+        const v1 = (row + 1) / 2.0;
+        return [
+          [u0, v1], [u1, v1], [u1, v0], [u0, v0]
+        ];
+      }
+
+      function addQuad(p0, p1, p2, p3, norm, faceIdx) {
+        const baseIdx = positions.length / 3;
+        positions.push(...p0, ...p1, ...p2, ...p3);
+        for (let i = 0; i < 4; i++) normals.push(...norm);
+        const fuv = faceUV(faceIdx);
+        uvs.push(...fuv[0], ...fuv[1], ...fuv[2], ...fuv[3]);
+        indices.push(baseIdx, baseIdx + 1, baseIdx + 2, baseIdx, baseIdx + 2, baseIdx + 3);
+      }
+
+      // Face 1 (Top, +Y)
+      addQuad([-s, s, -s], [s, s, -s], [s, s, s], [-s, s, s], [0, 1, 0], 1);
+      // Face 6 (Bottom, -Y)
+      addQuad([-s, -s, s], [s, -s, s], [s, -s, -s], [-s, -s, -s], [0, -1, 0], 6);
+      // Face 2 (Front, +Z)
+      addQuad([-s, -s, s], [s, -s, s], [s, s, s], [-s, s, s], [0, 0, 1], 2);
+      // Face 5 (Back, -Z)
+      addQuad([s, -s, -s], [-s, -s, -s], [-s, s, -s], [s, s, -s], [0, 0, -1], 5);
+      // Face 3 (Right, +X)
+      addQuad([s, -s, s], [s, -s, -s], [s, s, -s], [s, s, s], [1, 0, 0], 3);
+      // Face 4 (Left, -X)
+      addQuad([-s, -s, -s], [-s, -s, s], [-s, s, s], [-s, s, -s], [-1, 0, 0], 4);
+
+      return {
+        positions: new Float32Array(positions),
+        normals: new Float32Array(normals),
+        uvs: new Float32Array(uvs),
+        indices: new Uint16Array(indices)
+      };
+    }
+
+    function createGothicTextureAtlas(primaryColor = '#991b1b') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      const colWidth = 1024 / 3;
+      const rowHeight = 1024 / 2;
+
+      const pipCoords = {
+        1: [[0.5, 0.5]],
+        2: [[0.28, 0.28], [0.72, 0.72]],
+        3: [[0.26, 0.26], [0.5, 0.5], [0.74, 0.74]],
+        4: [[0.28, 0.28], [0.72, 0.28], [0.28, 0.72], [0.72, 0.72]],
+        5: [[0.28, 0.28], [0.72, 0.28], [0.5, 0.5], [0.28, 0.72], [0.72, 0.72]],
+        6: [[0.28, 0.24], [0.28, 0.5], [0.28, 0.76], [0.72, 0.24], [0.72, 0.5], [0.72, 0.76]]
+      };
+
+      for (let face = 1; face <= 6; face++) {
+        const col = (face - 1) % 3;
+        const row = Math.floor((face - 1) / 3);
+        const ox = col * colWidth;
+        const oy = row * rowHeight;
+        const w = colWidth;
+        const h = rowHeight;
+
+        // Fundo aveludado profundo com gradiente radial
+        const bg = ctx.createRadialGradient(ox + w*0.5, oy + h*0.5, 20, ox + w*0.5, oy + h*0.5, w*0.7);
+        bg.addColorStop(0, primaryColor);
+        bg.addColorStop(0.65, '#5c0914');
+        bg.addColorStop(1, '#240206');
+        ctx.fillStyle = bg;
+        ctx.fillRect(ox, oy, w, h);
+
+        // Borda chanfrada dourada
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(ox + 12, oy + 12, w - 24, h - 24);
+
+        // Linha de filigrana interna
+        ctx.strokeStyle = 'rgba(255, 235, 150, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(ox + 22, oy + 22, w - 44, h - 44);
+
+        // Ornamentos dos cantos
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(ox + 18, oy + 18, 12, 12);
+        ctx.fillRect(ox + w - 30, oy + 18, 12, 12);
+        ctx.fillRect(ox + 18, oy + h - 30, 12, 12);
+        ctx.fillRect(ox + w - 30, oy + h - 30, 12, 12);
+
+        // Pips dourados
+        const pips = pipCoords[face];
+        for (const [px, py] of pips) {
+          const cx = ox + px * w;
+          const cy = oy + py * h;
+          const r = face === 1 ? 38 : 25;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy + 4, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0,0,0,0.85)';
+          ctx.fill();
+
+          const pipGrad = ctx.createRadialGradient(cx - r*0.35, cy - r*0.35, 2, cx, cy, r);
+          pipGrad.addColorStop(0, '#ffffff');
+          pipGrad.addColorStop(0.2, '#fff199');
+          pipGrad.addColorStop(0.6, '#d4af37');
+          pipGrad.addColorStop(1, '#6b4f0c');
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fillStyle = pipGrad;
+          ctx.fill();
+
+          ctx.strokeStyle = '#3d2c04';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+
+      return canvas;
+    }
+
+    const diceVsSource = `
+      attribute vec3 aPosition;
+      attribute vec3 aNormal;
+      attribute vec2 aTexCoord;
+
+      uniform mat4 uMVPMatrix;
+      uniform mat4 uModelMatrix;
+      uniform mat3 uNormalMatrix;
+
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      varying vec2 vTexCoord;
+
+      void main() {
+        vec4 worldPos = uModelMatrix * vec4(aPosition, 1.0);
+        vWorldPos = worldPos.xyz;
+        vNormal = normalize(uNormalMatrix * aNormal);
+        vTexCoord = aTexCoord;
+        gl_Position = uMVPMatrix * vec4(aPosition, 1.0);
+      }
+    `;
+
+    const diceFsSource = `
+      precision mediump float;
+
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      varying vec2 vTexCoord;
+
+      uniform sampler2D uSampler;
+      uniform vec3 uLightDir;
+      uniform vec3 uEyePos;
+
+      void main() {
+        vec4 texColor = texture2D(uSampler, vTexCoord);
+        
+        vec3 N = normalize(vNormal);
+        vec3 L = normalize(uLightDir);
+        vec3 V = normalize(uEyePos - vWorldPos);
+        vec3 H = normalize(L + V);
+
+        float diff = max(dot(N, L), 0.0);
+        float spec = pow(max(dot(N, H), 0.0), 32.0) * 0.55;
+
+        vec3 ambient = vec3(0.50, 0.44, 0.54);
+        vec3 diffuse = diff * vec3(1.0, 0.95, 0.88);
+
+        vec3 rgb = texColor.rgb * (ambient + diffuse) + vec3(spec * 0.9, spec * 0.75, spec * 0.35);
+        gl_FragColor = vec4(rgb, 1.0);
+      }
+    `;
+
+    const diceShadowVsSource = `
+      attribute vec3 aPosition;
+      uniform mat4 uMVPMatrix;
+      varying vec2 vPos;
+      void main() {
+        vPos = aPosition.xz;
+        gl_Position = uMVPMatrix * vec4(aPosition, 1.0);
+      }
+    `;
+    const diceShadowFsSource = `
+      precision mediump float;
+      varying vec2 vPos;
+      uniform float uOpacity;
+      void main() {
+        float dist = length(vPos);
+        if (dist > 1.0) discard;
+        float core = 1.0 - smoothstep(0.0, 0.45, dist);
+        float penumbra = 1.0 - smoothstep(0.38, 1.0, dist);
+        float alpha = (core * 0.6 + penumbra * 0.4) * uOpacity;
+        gl_FragColor = vec4(0.0, 0.0, 0.0, alpha);
+      }
+    `;
+
+    class WebGLDiceEngine {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.gl = canvas.getContext('webgl', { alpha: true, antialias: true }) || canvas.getContext('experimental-webgl');
+        if (!this.gl) throw new Error('WebGL context unavailable');
+
+        this.dice = [];
+        this.isRolling = false;
+        this.onRollComplete = null;
+        this.themeColor = GOTHIC_PALETTE.crimson;
+        this.aspect = 1.0;
+
+        this.initGL();
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      initGL() {
+        const gl = this.gl;
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.clearColor(0, 0, 0, 0);
+
+        function compileShader(src, type) {
+          const s = gl.createShader(type);
+          gl.shaderSource(s, src);
+          gl.compileShader(s);
+          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            console.error('Shader error:', gl.getShaderInfoLog(s));
+            gl.deleteShader(s);
+            return null;
+          }
+          return s;
+        }
+
+        const vs = compileShader(diceVsSource, gl.VERTEX_SHADER);
+        const fs = compileShader(diceFsSource, gl.FRAGMENT_SHADER);
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vs);
+        gl.attachShader(this.program, fs);
+        gl.linkProgram(this.program);
+
+        this.uMVPMatrix = gl.getUniformLocation(this.program, 'uMVPMatrix');
+        this.uModelMatrix = gl.getUniformLocation(this.program, 'uModelMatrix');
+        this.uNormalMatrix = gl.getUniformLocation(this.program, 'uNormalMatrix');
+        this.uLightDir = gl.getUniformLocation(this.program, 'uLightDir');
+        this.uEyePos = gl.getUniformLocation(this.program, 'uEyePos');
+        this.uSampler = gl.getUniformLocation(this.program, 'uSampler');
+
+        this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
+        this.aNormal = gl.getAttribLocation(this.program, 'aNormal');
+        this.aTexCoord = gl.getAttribLocation(this.program, 'aTexCoord');
+
+        const svs = compileShader(diceShadowVsSource, gl.VERTEX_SHADER);
+        const sfs = compileShader(diceShadowFsSource, gl.FRAGMENT_SHADER);
+        this.shadowProgram = gl.createProgram();
+        gl.attachShader(this.shadowProgram, svs);
+        gl.attachShader(this.shadowProgram, sfs);
+        gl.linkProgram(this.shadowProgram);
+
+        this.sMVPMatrix = gl.getUniformLocation(this.shadowProgram, 'uMVPMatrix');
+        this.sOpacity = gl.getUniformLocation(this.shadowProgram, 'uOpacity');
+        this.saPosition = gl.getAttribLocation(this.shadowProgram, 'aPosition');
+
+        this.cubeData = createCubeData(0.9);
+        this.posBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.positions, gl.STATIC_DRAW);
+
+        this.normBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.normals, gl.STATIC_DRAW);
+
+        this.uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.uvs, gl.STATIC_DRAW);
+
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.cubeData.indices, gl.STATIC_DRAW);
+
+        const sq = 1.5;
+        const shadowQuad = new Float32Array([
+          -sq, 0, -sq,  sq, 0, -sq,  sq, 0, sq,
+          -sq, 0, -sq,  sq, 0, sq,  -sq, 0, sq
+        ]);
+        this.shadowBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.shadowBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, shadowQuad, gl.STATIC_DRAW);
+
+        this.texture = gl.createTexture();
+        this.updateTexture(this.themeColor);
+      }
+
+      updateTexture(themeColor) {
+        const gl = this.gl;
+        this.themeColor = themeColor;
+        const atlas = createGothicTextureAtlas(themeColor);
+
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.generateMipmap(gl.TEXTURE_2D);
+      }
+
+      resize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        this.canvas.width = width * (window.devicePixelRatio || 1);
+        this.canvas.height = height * (window.devicePixelRatio || 1);
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.aspect = width / height;
+      }
+
+      roll(count = 2, themeColor = null) {
+        if (themeColor && themeColor !== this.themeColor) {
+          this.updateTexture(themeColor);
+        }
+
+        const qty = Math.max(1, Math.min(6, count));
+        this.dice = [];
+        this.isRolling = true;
+        this.canvas.style.pointerEvents = 'auto';
+
+        // TRAJETÓRIAS CONVERGENTES:
+        // Dados lançados da base convergindo diretamente em direção ao centro da mesa [0, 0, 0],
+        // colidindo entre si no ar e no primeiro quique!
+        const focalCenter = [(Math.random() - 0.5) * 0.4, 0, (Math.random() - 0.5) * 0.4];
+
+        for (let i = 0; i < qty; i++) {
+          const startX = (i - (qty - 1) / 2) * 0.9 + (Math.random() - 0.5) * 0.3;
+          const startY = 4.2 + Math.random() * 0.8;
+          const startZ = 2.4 + (Math.random() - 0.5) * 0.4;
+          const pos = [startX, startY, startZ];
+
+          const toCenterX = focalCenter[0] - startX;
+          const toCenterZ = focalCenter[2] - startZ;
+          const vel = [
+            toCenterX * 2.2 + (Math.random() - 0.5) * 1.5,
+            -(4.0 + Math.random() * 2.5),
+            toCenterZ * 2.0 + (Math.random() - 0.5) * 1.2
+          ];
+
+          const angVel = [
+            (Math.random() - 0.5) * 35.0,
+            (Math.random() - 0.5) * 35.0,
+            (Math.random() - 0.5) * 35.0
+          ];
+          const rot = quatNormalize([Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5]);
+
+          this.dice.push({
+            pos,
+            vel,
+            rot,
+            targetRot: null,
+            snapProgress: 0,
+            angVel,
+            radius: 0.45,
+            colRadius: 0.62,
+            settled: false,
+            settleValue: 0
+          });
+        }
+
+        this.lastTime = performance.now();
+
+        return new Promise((resolve) => {
+          this.onRollComplete = (results) => {
+            resolve(results);
+          };
+        });
+      }
+
+      updatePhysics(dt) {
+        const floorY = 0.0;
+        const minX = -this.aspect * 2.3;
+        const maxX = this.aspect * 2.3;
+        const minZ = -2.2;
+        const maxZ = 2.2;
+
+        let allSettled = true;
+
+        for (let i = 0; i < this.dice.length; i++) {
+          const d = this.dice[i];
+          if (d.settled) continue;
+
+          // Gravidade
+          d.vel[1] -= 24.0 * dt;
+
+          // Posição
+          d.pos[0] += d.vel[0] * dt;
+          d.pos[1] += d.vel[1] * dt;
+          d.pos[2] += d.vel[2] * dt;
+
+          // Rotação
+          const angSpeed = Math.hypot(d.angVel[0], d.angVel[1], d.angVel[2]);
+          if (angSpeed > 0.001 && !d.targetRot) {
+            const axis = [d.angVel[0] / angSpeed, d.angVel[1] / angSpeed, d.angVel[2] / angSpeed];
+            const dq = quatFromAxisAngle(axis, angSpeed * dt);
+            quatMultiply(d.rot, dq, d.rot);
+            quatNormalize(d.rot);
+          }
+
+          // Quique no chão
+          if (d.pos[1] <= floorY + d.radius) {
+            d.pos[1] = floorY + d.radius;
+            if (Math.abs(d.vel[1]) > 0.45) {
+              d.vel[1] = -d.vel[1] * 0.52;
+              d.vel[0] *= 0.84;
+              d.vel[2] *= 0.84;
+              d.angVel[0] += (Math.random() - 0.5) * 10.0;
+              d.angVel[2] += (Math.random() - 0.5) * 10.0;
+            } else {
+              d.vel[1] = 0;
+              d.vel[0] *= 0.75;
+              d.vel[2] *= 0.75;
+              d.angVel[0] *= 0.75;
+              d.angVel[1] *= 0.75;
+              d.angVel[2] *= 0.75;
+            }
+          }
+
+          // Bordas
+          if (d.pos[0] < minX + d.radius) { d.pos[0] = minX + d.radius; d.vel[0] = Math.abs(d.vel[0]) * 0.75; d.angVel[1] += 5.0; }
+          if (d.pos[0] > maxX - d.radius) { d.pos[0] = maxX - d.radius; d.vel[0] = -Math.abs(d.vel[0]) * 0.75; d.angVel[1] -= 5.0; }
+          if (d.pos[2] < minZ + d.radius) { d.pos[2] = minZ + d.radius; d.vel[2] = Math.abs(d.vel[2]) * 0.75; d.angVel[0] += 5.0; }
+          if (d.pos[2] > maxZ - d.radius) { d.pos[2] = maxZ - d.radius; d.vel[2] = -Math.abs(d.vel[2]) * 0.75; d.angVel[0] -= 5.0; }
+
+          // Damping
+          d.vel[0] *= 0.985;
+          d.vel[1] *= 0.985;
+          d.vel[2] *= 0.985;
+          d.angVel[0] *= 0.98;
+          d.angVel[1] *= 0.98;
+          d.angVel[2] *= 0.98;
+
+          // Repouso e ACOMODAÇÃO NATURAL ORGÂNICA (Smootherstep C2-contínuo)
+          const speed = Math.hypot(d.vel[0], d.vel[1], d.vel[2]);
+          const rotSpeed = Math.hypot(d.angVel[0], d.angVel[1], d.angVel[2]);
+
+          if (d.pos[1] <= floorY + d.radius + 0.06 && speed < 0.35 && rotSpeed < 1.1) {
+            if (!d.targetRot) {
+              const snap = computeSnappedFlatOrientation(d.rot);
+              d.targetRot = snap.targetQuat;
+              d.settleValue = snap.faceValue;
+              d.startRot = [...d.rot];
+              d.startPos = [...d.pos];
+              d.snapTimer = 0;
+              d.snapDuration = 0.45; // Desaceleração suave e orgânica de 0.45s
+            }
+
+            d.snapTimer += dt;
+            const t = Math.min(1.0, d.snapTimer / d.snapDuration);
+            // Smootherstep (Ken Perlin): aceleração e desaceleração com derivadas nulas em t=0 e t=1
+            const ease = t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
+
+            quatSlerp(d.rot, d.startRot, d.targetRot, ease);
+            d.pos[1] = d.startPos[1] + (floorY + d.radius - d.startPos[1]) * ease;
+            d.pos[0] += d.vel[0] * dt * (1.0 - ease);
+            d.pos[2] += d.vel[2] * dt * (1.0 - ease);
+
+            if (t >= 1.0) {
+              d.rot = [...d.targetRot];
+              d.pos[1] = floorY + d.radius;
+              d.vel = [0, 0, 0];
+              d.angVel = [0, 0, 0];
+              d.settled = true;
+            } else {
+              allSettled = false;
+            }
+          } else {
+            allSettled = false;
+          }
+        }
+
+        // COLISÃO MÚTUA ELÁSTICA ENTRE OS DADOS:
+        for (let i = 0; i < this.dice.length; i++) {
+          for (let j = i + 1; j < this.dice.length; j++) {
+            const a = this.dice[i];
+            const b = this.dice[j];
+            const dx = a.pos[0] - b.pos[0];
+            const dy = a.pos[1] - b.pos[1];
+            const dz = a.pos[2] - b.pos[2];
+            const dist = Math.hypot(dx, dy, dz);
+            const minDist = a.colRadius + b.colRadius;
+
+            if (dist < minDist && dist > 0.001) {
+              const nx = dx / dist;
+              const ny = dy / dist;
+              const nz = dz / dist;
+              const overlap = (minDist - dist);
+
+              const halfOverlap = overlap * 0.52;
+              a.pos[0] += nx * halfOverlap;
+              a.pos[1] += ny * halfOverlap;
+              a.pos[2] += nz * halfOverlap;
+              b.pos[0] -= nx * halfOverlap;
+              b.pos[1] -= ny * halfOverlap;
+              b.pos[2] -= nz * halfOverlap;
+
+              if (a.pos[1] < floorY + a.radius) a.pos[1] = floorY + a.radius;
+              if (b.pos[1] < floorY + b.radius) b.pos[1] = floorY + b.radius;
+
+              const dvx = a.vel[0] - b.vel[0];
+              const dvy = a.vel[1] - b.vel[1];
+              const dvz = a.vel[2] - b.vel[2];
+              const vn = dvx * nx + dvy * ny + dvz * nz;
+
+              if (vn < 0) {
+                const restitution = 0.85;
+                const impulse = -(1 + restitution) * vn * 0.5;
+
+                a.vel[0] += impulse * nx;
+                a.vel[1] += impulse * ny;
+                a.vel[2] += impulse * nz;
+                b.vel[0] -= impulse * nx;
+                b.vel[1] -= impulse * ny;
+                b.vel[2] -= impulse * nz;
+
+                const spinForce = 16.0;
+                a.angVel[0] += (Math.random() - 0.5) * spinForce + ny * 6.0;
+                a.angVel[1] += (Math.random() - 0.5) * spinForce + nx * 6.0;
+                a.angVel[2] += (Math.random() - 0.5) * spinForce + nz * 6.0;
+
+                b.angVel[0] -= (Math.random() - 0.5) * spinForce + ny * 6.0;
+                b.angVel[1] -= (Math.random() - 0.5) * spinForce + nx * 6.0;
+                b.angVel[2] -= (Math.random() - 0.5) * spinForce + nz * 6.0;
+
+                a.targetRot = null;
+                a.startRot = null;
+                b.targetRot = null;
+                b.startRot = null;
+              }
+            }
+          }
+        }
+
+        if (this.isRolling && allSettled && this.dice.length > 0) {
+          this.isRolling = false;
+          const results = this.dice.map(d => d.settleValue);
+
+          setTimeout(() => {
+            this.canvas.style.pointerEvents = 'none';
+          }, 3000);
+
+          if (this.onRollComplete) {
+            this.onRollComplete(results);
+            this.onRollComplete = null;
+          }
+        }
+      }
+
+      render() {
+        const gl = this.gl;
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        if (this.dice.length === 0) return;
+
+        const eye = [0, 5.5, 4.8];
+        const center = [0, 0, 0];
+        const up = [0, 1, 0];
+
+        const projMatrix = mat4Perspective(mat4Create(), 42 * Math.PI / 180, this.aspect, 0.1, 100.0);
+        const viewMatrix = mat4LookAt(mat4Create(), eye, center, up);
+        const vpMatrix = mat4Multiply(mat4Create(), projMatrix, viewMatrix);
+
+        // Sombras intensificadas no piso Y = 0
+        gl.depthMask(false);
+        gl.useProgram(this.shadowProgram);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.shadowBuffer);
+        gl.enableVertexAttribArray(this.saPosition);
+        gl.vertexAttribPointer(this.saPosition, 3, gl.FLOAT, false, 0, 0);
+
+        for (const d of this.dice) {
+          const height = Math.max(0, d.pos[1] - d.radius);
+          const shadowScale = 1.0 + height * 0.35;
+
+          const shadowModel = mat4Create();
+          shadowModel[0] = shadowScale;
+          shadowModel[10] = shadowScale;
+          shadowModel[12] = d.pos[0];
+          shadowModel[13] = 0.005;
+          shadowModel[14] = d.pos[2];
+
+          const shadowMVP = mat4Multiply(mat4Create(), vpMatrix, shadowModel);
+          gl.uniformMatrix4fv(this.sMVPMatrix, false, shadowMVP);
+
+          const opacity = Math.max(0.12, 0.95 - height * 0.24);
+          gl.uniform1f(this.sOpacity, opacity);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+        gl.depthMask(true);
+
+        // Cubos
+        gl.useProgram(this.program);
+        gl.uniform3fv(this.uLightDir, [-0.5, 1.5, 0.9]);
+        gl.uniform3fv(this.uEyePos, eye);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.uniform1i(this.uSampler, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+        gl.enableVertexAttribArray(this.aPosition);
+        gl.vertexAttribPointer(this.aPosition, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuffer);
+        gl.enableVertexAttribArray(this.aNormal);
+        gl.vertexAttribPointer(this.aNormal, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.enableVertexAttribArray(this.aTexCoord);
+        gl.vertexAttribPointer(this.aTexCoord, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+        for (const d of this.dice) {
+          const modelMatrix = mat4Create();
+          mat4FromRotationTranslation(modelMatrix, d.rot, d.pos);
+
+          const mvpMatrix = mat4Multiply(mat4Create(), vpMatrix, modelMatrix);
+          gl.uniformMatrix4fv(this.uMVPMatrix, false, mvpMatrix);
+          gl.uniformMatrix4fv(this.uModelMatrix, false, modelMatrix);
+
+          const normMat = new Float32Array([
+            modelMatrix[0], modelMatrix[1], modelMatrix[2],
+            modelMatrix[4], modelMatrix[5], modelMatrix[6],
+            modelMatrix[8], modelMatrix[9], modelMatrix[10]
+          ]);
+          gl.uniformMatrix3fv(this.uNormalMatrix, false, normMat);
+
+          gl.drawElements(gl.TRIANGLES, this.cubeData.indices.length, gl.UNSIGNED_SHORT, 0);
+        }
+      }
+
+      loop(now) {
+        if (!this.lastTime) this.lastTime = now;
+        const dt = Math.min((now - this.lastTime) / 1000, 0.033);
+        this.lastTime = now;
+
+        if (this.isRolling || this.dice.some(d => !d.settled)) {
+          this.updatePhysics(dt);
+        }
+
+        this.render();
+        requestAnimationFrame(this.loop);
+      }
+
+      clear() {
+        this.dice = [];
+        this.isRolling = false;
+        if (this.gl) {
+          this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+        }
+        if (this.canvas) {
+          this.canvas.style.pointerEvents = 'none';
+        }
+      }
+    }
+
+    // ==========================================================================
+    // RESOLUÇÃO DE REGRAS FRACTAL RPG (v1.0.3)
+    // ==========================================================================
+    function resolveFractalRules(results = [], options = {}) {
+      const diceValues = Array.isArray(results) ? [...results] : [];
+      const isSemFatos = Boolean(options.isSemFatos);
+      const useDetermination = Boolean(options.useDetermination);
+      const nature = (options.nature || 'humano').toLowerCase();
+      const currentEssence = typeof options.essence === 'number' ? options.essence : null;
+
+      const highest = diceValues.length > 0 ? Math.max(...diceValues) : 0;
+      const sixesCount = diceValues.filter(v => v === 6).length;
+      const hasRupture = diceValues.includes(1);
+      const ruptureApplies = hasRupture && !isSemFatos;
+
+      let outcome = 'FALHA';
+      let outcomeTitle = '';
+      let outcomeDescription = '';
+
+      if (isSemFatos) {
+        if (highest === 6) {
+          outcome = 'SUCESSO_MILAGROSO';
+          outcomeTitle = 'SUCESSO MILAGROSO!';
+          outcomeDescription = `Dados: [ ${diceValues.join(', ')} ] — Tirou 6 puro sem Fatos aplicáveis!`;
+        } else {
+          outcome = 'FALHA';
+          outcomeTitle = 'FALHA (Sem Fatos)';
+          outcomeDescription = `Dados: [ ${diceValues.join(', ')} ] — Sem Fatos, somente o resultado 6 é Sucesso. (+1 XP)`;
+        }
+      } else {
+        if (sixesCount >= 2) {
+          outcome = 'IMPULSO';
+          outcomeTitle = `IMPULSO NARRATIVO! (${sixesCount} Seis)`;
+          outcomeDescription = `Dados: [ ${diceValues.join(', ')} ] — Sucesso triunfal com feito espetacular na cena!`;
+        } else if (highest >= 5) {
+          outcome = 'SUCESSO';
+          outcomeTitle = `SUCESSO! (Dado: ${highest})`;
+          outcomeDescription = `Dados: [ ${diceValues.join(', ')} ] — O objetivo é alcançado com perfeição.`;
+        } else {
+          outcome = 'FALHA';
+          outcomeTitle = `FALHA! (Dado: ${highest})`;
+          outcomeDescription = `Dados: [ ${diceValues.join(', ')} ] — O Arquiteto narra a Consequência. (+1 XP)`;
+        }
+      }
+
+      const isSuccess = outcome === 'SUCESSO' || outcome === 'IMPULSO' || outcome === 'SUCESSO_MILAGROSO';
+      const isCritical = outcome === 'IMPULSO';
+      const isFailure = outcome === 'FALHA';
+      const xpGained = isFailure ? 1 : 0;
+
+      // Determinação (Espírito para humanos, Sangue para dhampiros e vampiros)
+      const reserveType = nature === 'humano' ? 'Espírito' : 'Sangue';
+      let determinationAllowed = false;
+      let determinationError = null;
+
+      if (useDetermination) {
+        if (isSemFatos) {
+          determinationAllowed = false;
+          determinationError = 'Determinação não pode ser usada em rolagens sem Fatos';
+        } else if (currentEssence !== null && currentEssence <= 0) {
+          determinationAllowed = false;
+          determinationError = `Reserva de ${reserveType} esgotada`;
+        } else {
+          determinationAllowed = true;
+        }
+      }
+
+      const determinationCost = determinationAllowed ? 1 : 0;
+      const newEssence = (currentEssence !== null && determinationAllowed) ? Math.max(0, currentEssence - 1) : currentEssence;
+
+      return {
+        results: diceValues,
+        highest,
+        sixesCount,
+        isSemFatos,
+        outcome,
+        outcomeTitle,
+        outcomeDescription,
+        isSuccess,
+        isCritical,
+        isFailure,
+        xpGained,
+        hasRupture,
+        ruptureApplies,
+        determination: {
+          requested: useDetermination,
+          allowed: determinationAllowed,
+          cost: determinationCost,
+          reserveType,
+          error: determinationError,
+          newEssence
+        }
+      };
+    }
+
+    // ============================================================================
+    // PONTE OWLBEAR RODEO (VTT BRIDGE)
+    // ============================================================================
+    const OWLBEAR_CHANNEL = 'com.castlevania-rpg.dice/roll';
+    const MESSAGE_TYPE = 'FRACTAL_CASTLEVANIA_ROLL';
+    const PROTOCOL_VERSION = '1.0.0';
+
+    function formatRollPayload(raw = {}) {
+      const results = Array.isArray(raw.results) ? [...raw.results] : [];
+      const count = typeof raw.count === 'number' ? raw.count : results.length;
+      const highest = typeof raw.highest === 'number' ? raw.highest : (results.length > 0 ? Math.max(...results) : 0);
+      const sixes = typeof raw.sixesCount === 'number' ? raw.sixesCount : (typeof raw.sixes === 'number' ? raw.sixes : results.filter(v => v === 6).length);
+      const outcome = raw.outcome || (highest >= 5 ? 'SUCESSO' : 'FALHA');
+      const character = raw.characterName || raw.character || (typeof sheetData !== 'undefined' && sheetData.name) || 'Herói Desconhecido';
+      const nature = (raw.nature || (typeof sheetData !== 'undefined' && sheetData.species) || 'humano').toLowerCase();
+      const hasRupture = Boolean(raw.hasRupture !== undefined ? raw.hasRupture : results.includes(1));
+      const ruptureApplies = Boolean(raw.ruptureApplies !== undefined ? raw.ruptureApplies : (hasRupture && !raw.isSemFatos));
+      const isSuccess = Boolean(raw.isSuccess !== undefined ? raw.isSuccess : (highest >= 5));
+      const isCritical = Boolean(raw.isCritical !== undefined ? raw.isCritical : (outcome === 'IMPULSO' || sixes >= 2));
+      const isFailure = Boolean(raw.isFailure !== undefined ? raw.isFailure : (outcome === 'FALHA' || highest < 5));
+      const xpGained = typeof raw.xpGained === 'number' ? raw.xpGained : (isFailure ? 1 : 0);
+
+      return {
+        type: MESSAGE_TYPE,
+        version: PROTOCOL_VERSION,
+        character,
+        nature,
+        pool: count,
+        results,
+        highest,
+        sixes,
+        outcome,
+        outcomeTitle: raw.outcomeTitle || `${outcome}!`,
+        outcomeDescription: raw.outcomeDescription || `Dados: [ ${results.join(', ')} ]`,
+        hasRupture,
+        ruptureApplies,
+        isSuccess,
+        isCritical,
+        isFailure,
+        xpGained,
+        determination: raw.determination || null,
+        timestamp: typeof raw.timestamp === 'number' ? raw.timestamp : Date.now()
+      };
+    }
+
+    function formatNotification(payload) {
+      const char = payload.character || 'Herói Desconhecido';
+      const diceStr = Array.isArray(payload.results) ? payload.results.join(', ') : '';
+      const ruptureText = payload.ruptureApplies ? ' 🩸 ALERTA DE RUPTURA!' : '';
+
+      if (payload.outcome === 'IMPULSO') {
+        return {
+          message: `🔥 ${char}: IMPULSO NARRATIVO! (${payload.sixes} Seis!) [ ${diceStr} ]${ruptureText}`,
+          level: 'SUCCESS'
+        };
+      }
+      if (payload.outcome === 'SUCESSO_MILAGROSO') {
+        return {
+          message: `✨ ${char}: SUCESSO MILAGROSO! (Tirou 6 puro sem Fatos) [ ${diceStr} ]`,
+          level: 'SUCCESS'
+        };
+      }
+      if (payload.outcome === 'SUCESSO' || payload.isSuccess) {
+        return {
+          message: `⚔️ ${char}: SUCESSO! (Maior dado: ${payload.highest}) [ ${diceStr} ]${ruptureText}`,
+          level: 'SUCCESS'
+        };
+      }
+      return {
+        message: `💀 ${char}: FALHA! (Maior dado: ${payload.highest}) [ ${diceStr} ] (+1 XP)${ruptureText}`,
+        level: payload.ruptureApplies ? 'WARNING' : 'DEFAULT'
+      };
+    }
+
+    function createOwlbearBridge(options = {}) {
+      const win = options.windowObj !== undefined ? options.windowObj : (typeof window !== 'undefined' ? window : null);
+      let obrInstance = options.OBR || (win && win.OBR ? win.OBR : null);
+      const channel = options.channel || OWLBEAR_CHANNEL;
+      const onStatusChange = options.onStatusChange || null;
+
+      let isReady = false;
+      let currentUser = null;
+      const subscribers = new Set();
+      let obrUnsubscribe = null;
+      let windowListenerAttached = false;
+
+      function detectEnvironment() {
+        if (!win) {
+          return { isIframe: false, hasOBR: false, isOwlbear: false, mode: 'standalone' };
+        }
+        let isIframe = false;
+        try {
+          isIframe = win.self !== win.top;
+        } catch {
+          isIframe = true;
+        }
+        const hasOBR = Boolean(obrInstance || win.OBR || win.__OBR_INITIALIZED__);
+        const isOwlbearQuery = Boolean(
+          win.location &&
+          win.location.search &&
+          (win.location.search.includes('owlbear') || win.location.search.includes('vtt'))
+        );
+        const isOwlbear = isIframe || hasOBR || isOwlbearQuery;
+        let mode = 'standalone';
+        if (hasOBR) mode = 'owlbear-sdk';
+        else if (isIframe) mode = 'iframe';
+
+        return { isIframe, hasOBR, isOwlbear, mode };
+      }
+
+      function setupWindowListener() {
+        if (windowListenerAttached) return;
+        if (win && typeof win.addEventListener === 'function') {
+          win.addEventListener('message', (event) => {
+            if (event && event.data && event.data.type === MESSAGE_TYPE) {
+              notifySubscribers(event.data);
+            }
+          });
+          windowListenerAttached = true;
+        }
+      }
+
+      async function init() {
+        const env = detectEnvironment();
+        if (!obrInstance && win && win.OBR) obrInstance = win.OBR;
+
+        if (!obrInstance && env.isOwlbear && typeof document !== 'undefined') {
+          try {
+            const module = await import(/* webpackIgnore: true */ 'https://cdn.jsdelivr.net/npm/@owlbear-rodeo/sdk/+esm');
+            if (module && (module.default || module.OBR)) {
+              obrInstance = module.default || module.OBR;
+              win.OBR = obrInstance;
+            }
+          } catch (err) {}
+        }
+
+        if (obrInstance) {
+          try {
+            function subscribeBroadcast() {
+              if (obrInstance && obrInstance.broadcast && typeof obrInstance.broadcast.onMessage === 'function') {
+                try {
+                  obrUnsubscribe = obrInstance.broadcast.onMessage(channel, (event) => {
+                    if (event && event.data) notifySubscribers(event.data);
+                  });
+                } catch (err) {
+                  console.warn('[OwlbearBridge] Erro ao subscrever broadcast:', err);
+                }
+              }
+            }
+
+            if (typeof obrInstance.onReady === 'function') {
+              obrInstance.onReady((user) => {
+                isReady = true;
+                currentUser = user || null;
+                subscribeBroadcast();
+                if (typeof onStatusChange === 'function') {
+                  onStatusChange({ connected: true, user: currentUser, mode: 'owlbear-sdk' });
+                }
+              });
+            } else if (obrInstance.isReady) {
+              if (typeof obrInstance.isReady.then === 'function') await obrInstance.isReady;
+              isReady = true;
+              subscribeBroadcast();
+              if (typeof onStatusChange === 'function') {
+                onStatusChange({ connected: true, user: null, mode: 'owlbear-sdk' });
+              }
+            }
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao conectar SDK:', err);
+          }
+        }
+
+        setupWindowListener();
+        return isReady || env.isOwlbear;
+      }
+
+      function notifySubscribers(payload) {
+        for (const callback of subscribers) {
+          try {
+            callback(payload);
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro subscriber:', err);
+          }
+        }
+      }
+
+      async function broadcastRoll(rollData) {
+        const payload = formatRollPayload(rollData);
+        const notification = formatNotification(payload);
+        const dispatchedVia = [];
+        const errors = [];
+
+        if (win && win.parent && typeof win.parent.postMessage === 'function') {
+          try {
+            win.parent.postMessage(payload, '*');
+            dispatchedVia.push('postMessage');
+          } catch (err) {
+            errors.push({ target: 'postMessage', error: err });
+          }
+        }
+
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        if (activeOBR) {
+          if (activeOBR.broadcast && typeof activeOBR.broadcast.sendMessage === 'function') {
+            try {
+              await activeOBR.broadcast.sendMessage(channel, payload, { destination: 'ALL' });
+              dispatchedVia.push('obr-broadcast');
+            } catch (err) {
+              errors.push({ target: 'obr-broadcast', error: err });
+            }
+          }
+
+          if (activeOBR.notification && typeof activeOBR.notification.show === 'function') {
+            try {
+              await activeOBR.notification.show(notification.message, notification.level);
+              dispatchedVia.push('obr-notification');
+            } catch (err) {
+              errors.push({ target: 'obr-notification', error: err });
+            }
+          }
+        }
+
+        return {
+          success: errors.length === 0,
+          payload,
+          notification,
+          dispatchedVia,
+          errors
+        };
+      }
+
+      function onReceiveBroadcast(callback) {
+        if (typeof callback !== 'function') return () => {};
+        setupWindowListener();
+        subscribers.add(callback);
+        return () => {
+          subscribers.delete(callback);
+        };
+      }
+
+      return {
+        get isReady() { return isReady; },
+        get currentUser() { return currentUser; },
+        get obrInstance() { return obrInstance; },
+        detectEnvironment,
+        init,
+        broadcastRoll,
+        onReceiveBroadcast
+      };
+    }
+
+    function createFractalRollSystem(options = {}) {
+      let diceEngine = options.diceEngine || null;
+      const getContainer = options.getContainer || (() => (typeof document !== 'undefined' ? document.getElementById('dice-box-overlay') : null));
+      const getCanvas = options.getCanvas || (() => (typeof document !== 'undefined' ? (document.getElementById('diceCanvas3D') || document.querySelector('#dice-box-overlay canvas')) : null));
+      const settleTimeoutMs = options.settleTimeoutMs !== undefined ? options.settleTimeoutMs : 3000;
+      const onBroadcast = options.onBroadcast || null;
+      const owlbearBridge = options.owlbearBridge || null;
+
+      let isInitialized = false;
+      let isRolling = false;
+      let settleTimer = null;
+
+      function getThemeColor(species = 'humano', isParchment = false) {
+        const s = (species || '').toLowerCase();
+        if (s === 'dhampiro' || s === 'vampiro') {
+          return GOTHIC_PALETTE.crimson;
+        }
+        if (isParchment) {
+          return GOTHIC_PALETTE.bloodDark;
+        }
+        return GOTHIC_PALETTE.holyGold;
+      }
+
+      function setOverlayInteractive(interactive) {
+        const container = getContainer();
+        if (!container) return;
+        container.style.pointerEvents = interactive ? 'auto' : 'none';
+      }
+
+      async function init() {
+        if (isInitialized && diceEngine) return true;
+
+        const container = getContainer();
+        if (container) {
+          container.style.pointerEvents = 'none';
+        }
+
+        if (!diceEngine && typeof document !== 'undefined') {
+          let canvas = getCanvas();
+          if (!canvas && container) {
+            canvas = document.createElement('canvas');
+            canvas.id = 'diceCanvas3D';
+            container.appendChild(canvas);
+          }
+          if (canvas) {
+            try {
+              diceEngine = new WebGLDiceEngine(canvas);
+            } catch (err) {
+              console.warn('[FractalRollSystem] Falha ao iniciar WebGLDiceEngine:', err);
+            }
+          }
+        }
+
+        isInitialized = true;
+        return true;
+      }
+
+      async function roll3D(count = 2, rollOpts = {}) {
+        const qty = Math.max(1, Math.min(6, parseInt(count, 10) || 1));
+        const themeColor = rollOpts.themeColor || GOTHIC_PALETTE.crimson;
+
+        if (diceEngine && typeof diceEngine.roll === 'function') {
+          try {
+            return await diceEngine.roll(qty, themeColor);
+          } catch (err) {
+            console.warn('[FractalRollSystem] Falha no motor 3D, fallback matemático:', err);
+          }
+        }
+
+        const fallbackResults = [];
+        for (let i = 0; i < qty; i++) {
+          fallbackResults.push(Math.floor(Math.random() * 6) + 1);
+        }
+        return fallbackResults;
+      }
+
+      async function roll(params = {}) {
+        const {
+          count = 2,
+          nature = 'humano',
+          isParchment = false,
+          characterName = 'Herói',
+          useDetermination = false,
+          isSemFatos = false,
+          essence = null,
+          onDeductEssence = null,
+          onGainXP = null
+        } = params;
+
+        if (!isInitialized) {
+          await init();
+        }
+
+        if (settleTimer) {
+          clearTimeout(settleTimer);
+          settleTimer = null;
+        }
+
+        isRolling = true;
+        const container = getContainer();
+        if (container) {
+          container.classList.add('lights-dimmed');
+        }
+        setOverlayInteractive(true);
+
+        const themeColor = getThemeColor(nature, isParchment);
+        const diceValues = await roll3D(count, { themeColor });
+
+        isRolling = false;
+
+        if (settleTimeoutMs > 0) {
+          settleTimer = setTimeout(() => {
+            setOverlayInteractive(false);
+          }, settleTimeoutMs);
+        } else {
+          setOverlayInteractive(false);
+        }
+
+        // Processamento das Regras do Fractal RPG
+        const ruleEvaluation = resolveFractalRules(diceValues, {
+          isSemFatos,
+          useDetermination,
+          essence,
+          nature
+        });
+
+        // Consumo de Determinação com verificação de saldo
+        if (ruleEvaluation.determination.cost > 0 && typeof onDeductEssence === 'function') {
+          try {
+            onDeductEssence(ruleEvaluation.determination.cost, ruleEvaluation.determination.reserveType);
+          } catch (err) {
+            console.warn('[FractalRollSystem] Erro no callback onDeductEssence:', err);
+          }
+        }
+
+        // Crédito automático de +1 XP em Falhas (1 a 4)
+        if (ruleEvaluation.xpGained > 0 && typeof onGainXP === 'function') {
+          try {
+            onGainXP(ruleEvaluation.xpGained);
+          } catch (err) {
+            console.warn('[FractalRollSystem] Erro no callback onGainXP:', err);
+          }
+        }
+
+        const result = {
+          characterName,
+          nature,
+          count: diceValues.length,
+          useDetermination,
+          isSemFatos,
+          timestamp: Date.now(),
+          ...ruleEvaluation
+        };
+
+        if (owlbearBridge && typeof owlbearBridge.broadcastRoll === 'function') {
+          try {
+            await owlbearBridge.broadcastRoll(result);
+          } catch (err) {
+            console.warn('[FractalRollSystem] Erro no owlbearBridge.broadcastRoll:', err);
+          }
+        }
+
+        if (typeof onBroadcast === 'function') {
+          try {
+            onBroadcast(result);
+          } catch (err) {
+            console.warn('[FractalRollSystem] Erro no onBroadcast:', err);
+          }
+        }
+
+        return result;
+      }
+
+      function clear() {
+        if (settleTimer) {
+          clearTimeout(settleTimer);
+          settleTimer = null;
+        }
+        isRolling = false;
+        const container = getContainer();
+        if (container) {
+          container.classList.remove('lights-dimmed');
+        }
+        setOverlayInteractive(false);
+        if (diceEngine && typeof diceEngine.clear === 'function') {
+          diceEngine.clear();
+        }
+      }
+
+      return {
+        get isInitialized() { return isInitialized; },
+        get isRolling() { return isRolling; },
+        get diceEngine() { return diceEngine; },
+        get owlbearBridge() { return owlbearBridge; },
+        init,
+        getThemeColor,
+        roll3D,
+        roll,
+        clear,
+        setOverlayInteractive,
+        resolveFractalRules,
+        evaluateRoll: resolveFractalRules
+      };
+    }
+
+    const owlbearBridge = createOwlbearBridge();
+    window.owlbearBridge = owlbearBridge;
+
+    const FractalRollSystem = createFractalRollSystem({
+      owlbearBridge: owlbearBridge,
+      onBroadcast: (data) => broadcastToOwlbear(data)
+    });
+    window.FractalRollSystem = FractalRollSystem;
+    FractalRollSystem.init().catch(err => console.warn('[FractalRollSystem] Init warning:', err));
+
+    let manualDicePool = 2;
+
+    function handleAdvantageToggle() {
+      const advBox = document.getElementById('advantageCheckbox');
+      if (!advBox) return;
+
+      if (advBox.checked) {
+        if (manualDicePool === 0) {
+          advBox.checked = false;
+          showToast('⚠️ Determinação não pode ser usada em rolagens sem Fatos.');
+          updateDicePoolDisplay();
+          return;
+        }
+        if (sheetData.essence <= 0) {
+          advBox.checked = false;
+          const resName = sheetData.species === 'humano' ? 'Espírito' : 'Sangue';
+          showToast(`⚠️ Reserva de ${resName} esgotada! Em estado de Esgotamento.`);
+          updateDicePoolDisplay();
+          return;
+        }
+      }
+      updateDicePoolDisplay();
+    }
+
+    function setDicePoolManual(qty) {
+      manualDicePool = qty;
+      document.querySelectorAll('.btn-dock-pool, .btn-pool').forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.dice) === qty);
+      });
+      if (manualDicePool === 0) {
+        const advBox = document.getElementById('advantageCheckbox');
+        if (advBox && advBox.checked) {
+          advBox.checked = false;
+        }
+      }
+      updateDicePoolDisplay();
+    }
+
+    function updateDicePoolDisplay() {
+      const adv = document.getElementById('advantageCheckbox')?.checked;
+      let totalDice = manualDicePool;
+      if (manualDicePool === 0) {
+        totalDice = 1;
+      } else if (adv) {
+        totalDice = Math.min(4, manualDicePool + 1);
+      }
+      const btn = document.getElementById('btnRoll3D');
+      if (btn && !FractalRollSystem.isRolling) {
+        btn.textContent = `🎲 Rolar ${totalDice}d6`;
+      }
+    }
+
+    function requestFractalRiskRoll() {
+      if (typeof FractalRollSystem !== 'undefined' && FractalRollSystem.isRolling) return;
+      if (sessionStorage.getItem('skip_roll_confirm') === 'true') {
+        rollFractalRisk();
+        return;
+      }
+      openRollConfirmModal();
+    }
+
+    function openRollConfirmModal() {
+      const adv = document.getElementById('advantageCheckbox')?.checked || false;
+      const isSemFatos = manualDicePool === 0;
+      let totalDice = isSemFatos ? 1 : manualDicePool;
+      if (!isSemFatos && adv) totalDice = Math.min(4, totalDice + 1);
+
+      const modal = document.getElementById('rollConfirmOverlay');
+      const body = document.getElementById('rollConfirmBody');
+      if (!modal || !body) return;
+
+      const resName = sheetData.species === 'humano' ? 'Espírito' : 'Sangue';
+      let poolDesc = '';
+      if (isSemFatos) {
+        poolDesc = `<strong>1d6 de Desespero (Sem Fatos)</strong>`;
+      } else {
+        poolDesc = `<strong>${totalDice}d6</strong> (${manualDicePool} ${manualDicePool === 1 ? 'Fato aplicado' : 'Fatos aplicados'}${adv ? ' + 1d6 Determinação' : ''})`;
+      }
+
+      const detItem = adv ? `<li><span>⚡</span><span><strong>Determinação Ativada:</strong> Consumirá 1 ponto de <strong>${resName}</strong> da sua reserva ao confirmar.</span></li>` : '';
+
+      body.innerHTML = `
+        <div class="roll-confirm-pool-badge">🎲 Parada de Risco: ${poolDesc}</div>
+        <ul class="roll-confirm-risk-list">
+          ${detItem}
+          <li><span>⭐</span><span><strong>Falha (${isSemFatos ? '1 a 5' : '1 a 4'}):</strong> O Arquiteto narra a Consequência e a ficha recebe <strong>+1 XP</strong> automaticamente.</span></li>
+          <li><span>🩸</span><span><strong>Ruptura (Se tirar 1):</strong> Se qualquer dado resultar em 1, você sofrerá Ruptura e deverá marcar um de seus Fatos como <em>Quebrado</em>.</span></li>
+          <li><span>📡</span><span><strong>Transmissão VTT:</strong> O resultado será compartilhado em tempo real para o Owlbear Rodeo.</span></li>
+        </ul>
+      `;
+
+      modal.classList.add('show');
+    }
+
+    function closeRollConfirmModal() {
+      const modal = document.getElementById('rollConfirmOverlay');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function executeConfirmedRoll() {
+      const skipCheck = document.getElementById('skipRollConfirmCheckbox');
+      if (skipCheck && skipCheck.checked) {
+        sessionStorage.setItem('skip_roll_confirm', 'true');
+      }
+      closeRollConfirmModal();
+      rollFractalRisk();
+    }
+
+    function applyRuptureFromChip(factId, btnEl) {
+      toggleRuptura(factId);
+      if (btnEl) {
+        btnEl.style.textDecoration = 'line-through';
+        btnEl.style.opacity = '0.5';
+        btnEl.disabled = true;
+      }
+      showToast('🩸 Fato Quebrado pela Ruptura!');
+    }
+
+    function renderRuptureChips() {
+      const activeFacts = [];
+      for (const k in sheetData.facts) {
+        const f = sheetData.facts[k];
+        if (f && f.text && f.text.trim().length > 0 && !f.broken) {
+          activeFacts.push({ id: k, text: f.text.trim() });
+        }
+      }
+      if (activeFacts.length === 0) {
+        return `<div class="rupture-chips-container"><div class="rupture-chips-title">🩸 Ruptura Sofrida! (Nenhum Fato ativo restante para quebrar)</div></div>`;
+      }
+      const chipsHTML = activeFacts.map(f => {
+        const label = f.text.length > 25 ? f.text.substring(0, 23) + '…' : f.text;
+        const esc = f.text.replace(/"/g, '&quot;');
+        return `<button type="button" class="chip-rupture-item" onclick="applyRuptureFromChip(${f.id}, this)" title="Quebrar Fato: ${esc}">🩸 Quebrar: ${label}</button>`;
+      }).join('');
+      return `
+        <div class="rupture-chips-container">
+          <div class="rupture-chips-title">🩸 RUPTURA! (Tirou 1): Escolha um Fato para quebrar:</div>
+          <div class="rupture-chips-list">${chipsHTML}</div>
+        </div>
+      `;
+    }
+
+    async function rollFractalRisk() {
+      const adv = document.getElementById('advantageCheckbox')?.checked || false;
+      const isSemFatos = manualDicePool === 0;
+      let totalDice = isSemFatos ? 1 : manualDicePool;
+      if (!isSemFatos && adv) totalDice = Math.min(4, totalDice + 1);
+
+      const rollBtn = document.getElementById('btnRoll3D');
+      if (rollBtn) {
+        rollBtn.disabled = true;
+        rollBtn.textContent = '🎲 Rolando dados...';
+      }
+
+      const clearBtn = document.getElementById('btnClearDice');
+      if (clearBtn) {
+        clearBtn.style.display = 'none';
+      }
+
+      const banner = document.getElementById('rollerOutcomeBanner');
+      if (banner) {
+        banner.className = 'roller-outcome-banner';
+        banner.innerHTML = '';
+      }
+
+      try {
+        const rollResult = await FractalRollSystem.roll({
+          count: totalDice,
+          nature: sheetData.species,
+          isParchment: document.body.classList.contains('theme-parchment'),
+          characterName: sheetData.name || 'Herói Desconhecido',
+          useDetermination: adv,
+          isSemFatos: isSemFatos,
+          essence: sheetData.essence,
+          onDeductEssence: (cost, reserveType) => {
+            sheetData.essence = Math.max(0, sheetData.essence - cost);
+            renderPips();
+            autoSave();
+            showToast(`⚡ Gastou ${cost} ponto de ${reserveType} em Determinação.`);
+          },
+          onGainXP: (amount) => {
+            adjustXP(amount);
+          }
+        });
+
+        // Reseta o checkbox de Determinação após o uso na rolagem
+        if (adv) {
+          const advBox = document.getElementById('advantageCheckbox');
+          if (advBox) advBox.checked = false;
+        }
+
+        const results = rollResult.results;
+        const highest = rollResult.highest;
+        const countSixes = rollResult.sixesCount;
+        let outcomeHTML = '';
+        let bannerClass = '';
+        let outcomeTitle = rollResult.outcomeTitle;
+
+        if (rollResult.outcome === 'SUCESSO_MILAGROSO') {
+          bannerClass = 'banner-success';
+          outcomeHTML = `<strong>SUCESSO MILAGROSO!</strong><br>Dados: [ ${results.join(', ')} ] — Tirou 6 puro sem Fatos aplicáveis!`;
+        } else if (rollResult.outcome === 'IMPULSO') {
+          bannerClass = 'banner-critical';
+          outcomeHTML = `<strong>IMPULSO NARRATIVO! (${countSixes} Seis!)</strong><br>Dados: [ ${results.join(', ')} ] — Sucesso triunfal com feito espetacular na cena!`;
+        } else if (rollResult.outcome === 'SUCESSO') {
+          bannerClass = 'banner-success';
+          outcomeHTML = `<strong>SUCESSO! (Dado Mais Alto: ${highest})</strong><br>Dados: [ ${results.join(', ')} ] — O objetivo é alcançado com perfeição.`;
+        } else {
+          bannerClass = 'banner-fail';
+          outcomeHTML = `<strong>FALHA! (Dado Mais Alto: ${highest})</strong><br>Dados: [ ${results.join(', ')} ] — O Arquiteto narra a Consequência. <div class="xp-gain-badge">⭐ +1 XP adicionado à ficha</div>`;
+        }
+
+        if (rollResult.ruptureApplies) {
+          outcomeHTML += renderRuptureChips();
+        }
+
+        outcomeHTML = `<button type="button" class="banner-close-btn" onclick="clearFractalDice()" title="Fechar banner e limpar dados">✕</button>` + outcomeHTML;
+
+        if (banner) {
+          banner.className = `roller-outcome-banner show ${bannerClass}`;
+          banner.innerHTML = outcomeHTML;
+        }
+
+        if (clearBtn) {
+          clearBtn.style.display = 'inline-flex';
+        }
+      } catch (err) {
+        console.error('Erro ao rolar dados de risco:', err);
+      } finally {
+        if (rollBtn) {
+          rollBtn.disabled = false;
+          updateDicePoolDisplay();
+        }
+      }
+    }
+
+    function clearFractalDice() {
+      if (typeof FractalRollSystem !== 'undefined' && FractalRollSystem.clear) {
+        FractalRollSystem.clear();
+      }
+      const overlay = document.getElementById('dice-box-overlay');
+      if (overlay) {
+        overlay.classList.remove('lights-dimmed');
+      }
+      const banner = document.getElementById('rollerOutcomeBanner');
+      if (banner) {
+        banner.className = 'roller-outcome-banner';
+        banner.innerHTML = '';
+      }
+      const clearBtn = document.getElementById('btnClearDice');
+      if (clearBtn) {
+        clearBtn.style.display = 'none';
+      }
+    }
+
+    // TRANSMISSÃO PARA OWLBEAR RODEO
+    function broadcastToOwlbear(rollData) {
+      if (typeof owlbearBridge !== 'undefined' && owlbearBridge) {
+        return owlbearBridge.broadcastRoll(rollData);
+      }
+      try {
+        const payload = formatRollPayload(rollData);
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(payload, '*');
+        }
+      } catch (err) {
+        console.warn('Owlbear Rodeo broadcast not available:', err);
+      }
+    }
+
+    // ATUALIZAR UI DO MODO VTT
+    function updateVttUI(env) {
+      if (!env) return;
+      const vttBtn = document.getElementById('btnToggleVtt');
+      if (env.isOwlbear) {
+        document.body.classList.add('mode-vtt-compact');
+        if (vttBtn) {
+          vttBtn.classList.add('btn-vtt-active');
+          vttBtn.innerHTML = env.hasOBR ? '🟢 Owlbear Ativo' : '🦉 Modo VTT';
+          vttBtn.title = env.hasOBR ? 'Conectado via Owlbear Rodeo SDK' : 'Executando em modo VTT embutido';
+        }
+      }
+    }
+
+    // ALTERNAR MODO VTT COMPACTO (OWLBEAR RODEO)
+    function toggleVttMode() {
+      document.body.classList.toggle('mode-vtt-compact');
+      const isVtt = document.body.classList.contains('mode-vtt-compact');
+      const vttBtn = document.getElementById('btnToggleVtt');
+      if (vttBtn) {
+        if (isVtt) {
+          vttBtn.classList.add('btn-vtt-active');
+          const hasOBR = typeof owlbearBridge !== 'undefined' && owlbearBridge && owlbearBridge.detectEnvironment().hasOBR;
+          vttBtn.innerHTML = hasOBR ? '🟢 Owlbear Ativo' : '🦉 Modo VTT';
+        } else {
+          vttBtn.classList.remove('btn-vtt-active');
+          vttBtn.innerHTML = '🦉 VTT / Owlbear';
+        }
+      }
+      showToast(isVtt ? '🦉 Modo VTT Compacto (Owlbear) Ativado' : '🏰 Modo Ficha Completa Ativado');
+    }
+
+    // ALTERNAR TEMA
+    function toggleTheme() {
+      document.body.classList.toggle('theme-parchment');
+      const isParchment = document.body.classList.contains('theme-parchment');
+      showToast(isParchment ? '📜 Modo Pergaminho Ativado' : '🏰 Modo Castelo Noturno Ativado');
+      autoSave();
+    }
+
+    // MODAL DE REGRAS
+    function openRulesModal() {
+      document.getElementById('rulesModalOverlay').classList.add('open');
+    }
+    function closeRulesModal() {
+      document.getElementById('rulesModalOverlay').classList.remove('open');
+    }
+
+    // MODAL DE INTERLÚDIO (3 XP)
+    function openInterludeAdvanceModal() {
+      if (sheetData.xp < 3) {
+        showToast('⚠️ Requer ao menos 3 XP para aprimoramento de Interlúdio.');
+        return;
+      }
+      const choice = confirm("✦ APRIMORAMENTO DE INTERLÚDIO (3 XP) ✦\n\nClique em OK para adicionar +1 ao Teto Máximo de Resistência/Espírito/Sangue, ou CANCELAR para criar um Novo Fato permanente.");
+      if (choice) {
+        sheetData.xp -= 3;
+        const which = confirm("Deseja aumentar RESISTÊNCIA? (OK = Resistência / Cancelar = Espírito ou Sangue)");
+        if (which) {
+          sheetData.vitalityMax = Math.min(6, sheetData.vitalityMax + 1);
+          sheetData.vitality = sheetData.vitalityMax;
+        } else {
+          sheetData.essenceMax = Math.min(6, sheetData.essenceMax + 1);
+          sheetData.essence = sheetData.essenceMax;
+        }
+        renderPips();
+        showToast('Teto de Reserva aprimorado com sucesso!');
+      } else {
+        sheetData.xp -= 3;
+        addNewCustomFact();
+        showToast('Novo Fato desbloqueado por 3 XP!');
+      }
+      document.getElementById('charXPDisplay').textContent = sheetData.xp;
+      autoSave();
+    }
+
+    function addNewCustomFact() {
+      const count = Object.keys(sheetData.facts).length + 1;
+      sheetData.facts[count] = { text: '', broken: false };
+      
+      const container = document.getElementById('extraFactsContainer');
+      const div = document.createElement('div');
+      div.className = 'fact-card';
+      div.id = `factCard-${count}`;
+      div.innerHTML = `
+        <div class="fact-number-badge">${count}</div>
+        <div class="fact-content-wrap">
+          <div class="fact-premise-label">✦ Fato de Evolução (${count})</div>
+          <input type="text" class="fact-input" id="factInput-${count}" placeholder="Novo fato conquistado na história..." oninput="autoSave()">
+        </div>
+        <div class="fact-actions-wrap">
+          <button class="btn-ruptura" id="rupturaBtn-${count}" onclick="toggleRuptura(${count})">
+            ⚡ Ruptura
+          </button>
+        </div>
+      `;
+      container.appendChild(div);
+      autoSave();
+    }
+
+    // CARREGAR HERÓIS PRONTOS
+    function loadSelectedHero(heroKey) {
+      if (!heroKey) return;
+      if (heroKey === 'limpar') {
+        if (confirm("Deseja criar uma nova ficha em branco?")) {
+          localStorage.removeItem('fractal_castlevania_sheet');
+          location.reload();
+        }
+        return;
+      }
+
+      const h = PRESET_HEROES[heroKey];
+      if (!h) return;
+
+      document.getElementById('charName').value = h.name;
+      document.getElementById('charPlayer').value = h.player;
+      document.getElementById('charConcept').value = h.concept;
+      document.getElementById('charXPDisplay').textContent = h.xp;
+      sheetData.xp = h.xp;
+
+      sheetData.vitality = h.vitality;
+      sheetData.vitalityMax = h.vitalityMax;
+      sheetData.essence = h.essence;
+      sheetData.essenceMax = h.essenceMax;
+
+      for (let i = 1; i <= 7; i++) {
+        const inp = document.getElementById(`factInput-${i}`);
+        if (inp) {
+          inp.value = (h.facts[i] && h.facts[i].text) ? h.facts[i].text : '';
+          sheetData.facts[i] = { text: inp.value, broken: false };
+          const card = document.getElementById(`factCard-${i}`);
+          const btn = document.getElementById(`rupturaBtn-${i}`);
+          if (card) card.classList.remove('fact-broken');
+          if (btn) btn.classList.remove('active');
+        }
+      }
+
+      if (h.powers) {
+        sheetData.powers = JSON.parse(JSON.stringify(h.powers));
+        document.getElementById('powerOneName').value = h.powers[1]?.name || '';
+        document.getElementById('powerOneEffect').value = h.powers[1]?.effect || '';
+        document.getElementById('powerTwoName').value = h.powers[2]?.name || '';
+        document.getElementById('powerTwoEffect').value = h.powers[2]?.effect || '';
+        document.getElementById('powerThreeName').value = h.powers[3]?.name || '';
+        document.getElementById('powerThreeEffect').value = h.powers[3]?.effect || '';
+      }
+
+      document.getElementById('charScarsNotes').value = h.scars || '';
+      document.getElementById('charInventoryNotes').value = h.inventory || '';
+
+      setSpecies(h.species, false);
+      renderPips();
+      showToast(`Herói pronto carregado: ${h.name}!`);
+      autoSave();
+    }
+
+    // PERSISTÊNCIA LOCALSTORAGE
+    function autoSave() {
+      sheetData.name = document.getElementById('charName').value;
+      sheetData.player = document.getElementById('charPlayer').value;
+      sheetData.concept = document.getElementById('charConcept').value;
+      
+      for (let i = 1; i <= 7; i++) {
+        const inp = document.getElementById(`factInput-${i}`);
+        if (inp) {
+          if (!sheetData.facts[i]) sheetData.facts[i] = { text: '', broken: false };
+          sheetData.facts[i].text = inp.value;
+        }
+      }
+
+      sheetData.powers = {
+        1: {
+          name: document.getElementById('powerOneName').value,
+          effect: document.getElementById('powerOneEffect').value
+        },
+        2: {
+          name: document.getElementById('powerTwoName').value,
+          effect: document.getElementById('powerTwoEffect').value
+        },
+        3: {
+          name: document.getElementById('powerThreeName').value,
+          effect: document.getElementById('powerThreeEffect').value
+        }
+      };
+
+      sheetData.scars = document.getElementById('charScarsNotes').value;
+      sheetData.inventory = document.getElementById('charInventoryNotes').value;
+
+      localStorage.setItem('fractal_castlevania_sheet', JSON.stringify(sheetData));
+    }
+
+    function saveCharacterSheet(manual = false) {
+      autoSave();
+      if (manual) showToast('💾 Ficha de personagem salva localmente!');
+    }
+
+    function loadSavedData() {
+      const raw = localStorage.getItem('fractal_castlevania_sheet');
+      if (!raw) {
+        setSpecies('humano', true);
+        return;
+      }
+      try {
+        const data = JSON.parse(raw);
+        Object.assign(sheetData, data);
+
+        document.getElementById('charName').value = sheetData.name || '';
+        document.getElementById('charPlayer').value = sheetData.player || '';
+        document.getElementById('charConcept').value = sheetData.concept || '';
+        document.getElementById('charXPDisplay').textContent = sheetData.xp || 0;
+
+        for (let i = 1; i <= 7; i++) {
+          const inp = document.getElementById(`factInput-${i}`);
+          if (inp && sheetData.facts[i]) {
+            inp.value = sheetData.facts[i].text || '';
+            if (sheetData.facts[i].broken) {
+              const card = document.getElementById(`factCard-${i}`);
+              const btn = document.getElementById(`rupturaBtn-${i}`);
+              if (card) card.classList.add('fact-broken');
+              if (btn) btn.classList.add('active');
+            }
+          }
+        }
+
+        if (sheetData.powers) {
+          document.getElementById('powerOneName').value = sheetData.powers[1]?.name || '';
+          document.getElementById('powerOneEffect').value = sheetData.powers[1]?.effect || '';
+          document.getElementById('powerTwoName').value = sheetData.powers[2]?.name || '';
+          document.getElementById('powerTwoEffect').value = sheetData.powers[2]?.effect || '';
+          document.getElementById('powerThreeName').value = sheetData.powers[3]?.name || '';
+          document.getElementById('powerThreeEffect').value = sheetData.powers[3]?.effect || '';
+        }
+
+        document.getElementById('charScarsNotes').value = sheetData.scars || '';
+        document.getElementById('charInventoryNotes').value = sheetData.inventory || '';
+
+        setSpecies(sheetData.species || 'humano', false);
+      } catch (e) {
+        console.error('Erro ao ler ficha salva:', e);
+      }
+    }
+
+    // EXPORTAR & IMPORTAR JSON
+    function exportJSON() {
+      autoSave();
+      const filename = `Ficha_Fractal_${(sheetData.name || 'Castlevania').replace(/\s+/g, '_')}.json`;
+      const blob = new Blob([JSON.stringify(sheetData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 Arquivo JSON exportado com sucesso!');
+    }
+
+    function importJSON(evt) {
+      const file = evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          Object.assign(sheetData, data);
+          localStorage.setItem('fractal_castlevania_sheet', JSON.stringify(sheetData));
+          location.reload();
+        } catch (err) {
+          alert('Erro ao carregar o arquivo JSON: formato inválido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // TOAST FEEDBACK
+    function showToast(msg) {
+      const el = document.getElementById('toastMessage');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2800);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+Nome do personagem
+Pequena história
+Raça
+* Humano
+* Dhampir
+* Vampiro
+-----
+Reservas
+* Resistência
+Gatilho: Sofrer dano
+Consequência: Ferimento grave
+Se um ataque bem sucedido de um inimigo ou o contexto narrativo assim pedir, o personagem perde pelo menos 1 ponto de Resistência.
+Quando a Resistência chegar a zero, o personagem sofre um Ferimento Grave e não poderá mais continuar combatendo. Dependendo das circunstâncias, poderá fugir, esconder-se, render-se ou receber ajuda. O Arquiteto determina as consequências narrativas da situação.
+
+Humano: 3 Pontos de Resistência
+Dhampiro: 3 Pontos de Resistência
+Vampiro: 2 Pontos de Resistência
+
+Espírito e Sangue
+* Espírito (Apenas Humano) - Reserva inicial: 3/3
+Gatilho: Uso de Habilidade ou Determinação (+1d6)
+Consequência: Esgotamento de Espírito e desvantagem narrativa
+
+* Sangue (Apenas Dhampiro ou Vampiro) - Reserva inicial: 2/2
+Gatilho: Uso de Habilidade ou Determinação (+1d6)
+Consequência: Esgotamento de Sangue e desvantagem narrativa
+Obs: Um Dhampiro ou Vampiro pode recuperar esta Reserva bebendo sangue humano.
+Recupera um ponto de Sangue por humano.
+
+Humano
+Poder de Espírito 1: Determinação (+1d6)
+Poder de Espírito 2: Escolha um poder
+Poder de Espírito 3: Escolha um poder
+
+Dhampiro
+Poder de Sangue 1: Super velocidade
+Poder de Sangue 2: Determinação (+1d6)
+Poder de Sangue 3:Escolha um poder
+
+Vampiro
+Poder de Sangue 1: Recupera 1 ponto de Resistência
+Poder de Sangue 2: Determinação (+1d6)
+Poder de Sangue 3: Escolha um poder
+
+Obs: Antes de uma Rolagem de Risco, o personagem pode gastar 1 ponto de Espírito ou Sangue para receber um dado extra. Esse dado conta como Vantagem para fins mecânicos, não se acumula com outra Vantagem e respeita o limite de 4d6. A Determinação não pode ser usada em uma rolagem sem Fatos aplicáveis.
+
+Obs: As Reservas de Espírito ou Sangue após o uso podem continuar sendo utilizadas em outras narrativas até que a Reserva chegue em Zero.
+-----
+Fatos
+Um Fato representa qualquer coisa verdadeira sobre o seu personagem que o Jogador quer ver em cena. Pode ser uma palavra, descrições sobre ele ou até mesmo uma frase que ele diria. Então, em cada Fato, descreva, em até duas linhas, o que aquele Fato é.
+Por exemplo:
+Premissa 1: Sangue e Linhagem: Minha família descende dos Belmonts, uma linhagem lendária de caçadores de monstros.
+
+Fatos Iniciais
+* Sangue e Linhagem
+* Experiência contra oponentes
+* Fardo Pessoal
+
+Fatos Adicionais Por Raça
+Humano: Adiciona mais 3 Fatos livres
+Dhampiro: Adiciona mais 2 Fatos livres
+Vampiro: Adiciona mais 4 Fatos livres

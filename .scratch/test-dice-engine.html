@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Teste Motor 3D WebGL</title>
+  <style>
+    body { margin: 0; background: #16121e; color: #fff; font-family: sans-serif; overflow: hidden; }
+    #canvas3d { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; }
+    #controls { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 10px; }
+    button { padding: 10px 24px; font-size: 14px; font-weight: bold; background: #8b1525; color: #fff; border: 1px solid #d4af37; border-radius: 20px; cursor: pointer; }
+    #status { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10; font-size: 18px; color: #ffd700; font-weight: bold; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+  <div id="status"></div>
+  <div id="controls">
+    <button id="rollBtn" onclick="triggerRoll(3)">🎲 Rolar Dados</button>
+  </div>
+
+  <script>
+    // Math Utilities
+    function mat4Create() {
+      const out = new Float32Array(16);
+      out[0] = 1; out[5] = 1; out[10] = 1; out[15] = 1;
+      return out;
+    }
+
+    function mat4LookAt(out, eye, center, up) {
+      let x0, x1, x2, y0, y1, y2, z0, z1, z2, len;
+      const eyex = eye[0], eyey = eye[1], eyez = eye[2];
+      const upx = up[0], upy = up[1], upz = up[2];
+      const centerx = center[0], centery = center[1], centerz = center[2];
+
+      z0 = eyex - centerx; z1 = eyey - centery; z2 = eyez - centerz;
+      len = Math.hypot(z0, z1, z2);
+      if (len === 0) { z2 = 1; } else { z0 /= len; z1 /= len; z2 /= len; }
+
+      x0 = upy * z2 - upz * z1;
+      x1 = upz * z0 - upx * z2;
+      x2 = upx * z1 - upy * z0;
+      len = Math.hypot(x0, x1, x2);
+      if (len === 0) { x0 = 0; x1 = 0; x2 = 0; } else { x0 /= len; x1 /= len; x2 /= len; }
+
+      y0 = z1 * x2 - z2 * x1;
+      y1 = z2 * x0 - z0 * x2;
+      y2 = z0 * x1 - z1 * x0;
+
+      out[0] = x0; out[1] = y0; out[2] = z0; out[3] = 0;
+      out[4] = x1; out[5] = y1; out[6] = z1; out[7] = 0;
+      out[8] = x2; out[9] = y2; out[10] = z2; out[11] = 0;
+      out[12] = -(x0 * eyex + x1 * eyey + x2 * eyez);
+      out[13] = -(y0 * eyex + y1 * eyey + y2 * eyez);
+      out[14] = -(z0 * eyex + z1 * eyey + z2 * eyez);
+      out[15] = 1;
+      return out;
+    }
+
+    function mat4Perspective(out, fovy, aspect, near, far) {
+      const f = 1.0 / Math.tan(fovy / 2);
+      out[0] = f / aspect; out[1] = 0; out[2] = 0; out[3] = 0;
+      out[4] = 0; out[5] = f; out[6] = 0; out[7] = 0;
+      out[8] = 0; out[9] = 0; out[10] = (far + near) / (near - far); out[11] = -1;
+      out[12] = 0; out[13] = 0; out[14] = (2 * far * near) / (near - far); out[15] = 0;
+      return out;
+    }
+
+    function mat4Multiply(out, a, b) {
+      const a00 = a[0], a01 = a[1], a02 = a[2], a03 = a[3];
+      const a10 = a[4], a11 = a[5], a12 = a[6], a13 = a[7];
+      const a20 = a[8], a21 = a[9], a22 = a[10], a23 = a[11];
+      const a30 = a[12], a31 = a[13], a32 = a[14], a33 = a[15];
+      let b0 = b[0], b1 = b[1], b2 = b[2], b3 = b[3];
+      out[0] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[1] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[2] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[3] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[4]; b1 = b[5]; b2 = b[6]; b3 = b[7];
+      out[4] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[5] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[6] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[7] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[8]; b1 = b[9]; b2 = b[10]; b3 = b[11];
+      out[8] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[9] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[10] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[11] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      b0 = b[12]; b1 = b[13]; b2 = b[14]; b3 = b[15];
+      out[12] = b0*a00 + b1*a10 + b2*a20 + b3*a30;
+      out[13] = b0*a01 + b1*a11 + b2*a21 + b3*a31;
+      out[14] = b0*a02 + b1*a12 + b2*a22 + b3*a32;
+      out[15] = b0*a03 + b1*a13 + b2*a23 + b3*a33;
+      return out;
+    }
+
+    function quatFromAxisAngle(axis, rad) {
+      const half = rad / 2;
+      const s = Math.sin(half);
+      return [axis[0] * s, axis[1] * s, axis[2] * s, Math.cos(half)];
+    }
+
+    function quatMultiply(out, a, b) {
+      const ax = a[0], ay = a[1], az = a[2], aw = a[3];
+      const bx = b[0], by = b[1], bz = b[2], bw = b[3];
+      out[0] = ax * bw + aw * bx + ay * bz - az * by;
+      out[1] = ay * bw + aw * by + az * bx - ax * bz;
+      out[2] = az * bw + aw * bz + ax * by - ay * bx;
+      out[3] = aw * bw - ax * bx - ay * by - az * bz;
+      return out;
+    }
+
+    function quatNormalize(q) {
+      const len = Math.hypot(q[0], q[1], q[2], q[3]) || 1;
+      q[0] /= len; q[1] /= len; q[2] /= len; q[3] /= len;
+      return q;
+    }
+
+    function quatSlerp(out, a, b, t) {
+      let ax = a[0], ay = a[1], az = a[2], aw = a[3];
+      let bx = b[0], by = b[1], bz = b[2], bw = b[3];
+      let cosom = ax * bx + ay * by + az * bz + aw * bw;
+      if (cosom < 0) {
+        cosom = -cosom;
+        bx = -bx; by = -by; bz = -bz; bw = -bw;
+      }
+      let scale0, scale1;
+      if (1.0 - cosom > 0.0001) {
+        const omega = Math.acos(cosom);
+        const sinom = Math.sin(omega);
+        scale0 = Math.sin((1.0 - t) * omega) / sinom;
+        scale1 = Math.sin(t * omega) / sinom;
+      } else {
+        scale0 = 1.0 - t;
+        scale1 = t;
+      }
+      out[0] = scale0 * ax + scale1 * bx;
+      out[1] = scale0 * ay + scale1 * by;
+      out[2] = scale0 * az + scale1 * bz;
+      out[3] = scale0 * aw + scale1 * bw;
+      return quatNormalize(out);
+    }
+
+    function mat4FromRotationTranslation(out, q, v) {
+      const x = q[0], y = q[1], z = q[2], w = q[3];
+      const x2 = x + x, y2 = y + y, z2 = z + z;
+      const xx = x * x2, xy = x * y2, xz = x * z2;
+      const yy = y * y2, yz = y * z2, zz = z * z2;
+      const wx = w * x2, wy = w * y2, wz = w * z2;
+      out[0] = 1 - (yy + zz); out[1] = xy + wz; out[2] = xz - wy; out[3] = 0;
+      out[4] = xy - wz; out[5] = 1 - (xx + zz); out[6] = yz + wx; out[7] = 0;
+      out[8] = xz + wy; out[9] = yz - wx; out[10] = 1 - (xx + yy); out[11] = 0;
+      out[12] = v[0]; out[13] = v[1]; out[14] = v[2]; out[15] = 1;
+      return out;
+    }
+
+    function rotateVec3ByQuat(out, v, q) {
+      const qx = q[0], qy = q[1], qz = q[2], qw = q[3];
+      const vx = v[0], vy = v[1], vz = v[2];
+      const ix = qw * vx + qy * vz - qz * vy;
+      const iy = qw * vy + qz * vx - qx * vz;
+      const iz = qw * vz + qx * vy - qy * vx;
+      const iw = -qx * vx - qy * vy - qz * vz;
+      out[0] = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+      out[1] = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+      out[2] = iz * qw + iw * -qz + ix * -qy - iy * -qx;
+      return out;
+    }
+
+    // Shaders
+    const vsSource = `
+      attribute vec3 aPosition;
+      attribute vec3 aNormal;
+      attribute vec2 aTexCoord;
+
+      uniform mat4 uMVPMatrix;
+      uniform mat4 uModelMatrix;
+      uniform mat3 uNormalMatrix;
+
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      varying vec2 vTexCoord;
+
+      void main() {
+        vec4 worldPos = uModelMatrix * vec4(aPosition, 1.0);
+        vWorldPos = worldPos.xyz;
+        vNormal = normalize(uNormalMatrix * aNormal);
+        vTexCoord = aTexCoord;
+        gl_Position = uMVPMatrix * vec4(aPosition, 1.0);
+      }
+    `;
+
+    const fsSource = `
+      precision mediump float;
+
+      varying vec3 vNormal;
+      varying vec3 vWorldPos;
+      varying vec2 vTexCoord;
+
+      uniform sampler2D uSampler;
+      uniform vec3 uLightDir;
+      uniform vec3 uEyePos;
+
+      void main() {
+        vec4 texColor = texture2D(uSampler, vTexCoord);
+        
+        vec3 N = normalize(vNormal);
+        vec3 L = normalize(uLightDir);
+        vec3 V = normalize(uEyePos - vWorldPos);
+        vec3 H = normalize(L + V);
+
+        float diff = max(dot(N, L), 0.0);
+        float spec = pow(max(dot(N, H), 0.0), 32.0) * 0.55;
+
+        vec3 ambient = vec3(0.50, 0.44, 0.54);
+        vec3 diffuse = diff * vec3(1.0, 0.95, 0.88);
+
+        vec3 rgb = texColor.rgb * (ambient + diffuse) + vec3(spec * 0.9, spec * 0.75, spec * 0.35);
+        gl_FragColor = vec4(rgb, 1.0);
+      }
+    `;
+
+    const shadowVsSource = `
+      attribute vec3 aPosition;
+      uniform mat4 uMVPMatrix;
+      varying vec2 vPos;
+      void main() {
+        vPos = aPosition.xz;
+        gl_Position = uMVPMatrix * vec4(aPosition, 1.0);
+      }
+    `;
+    const shadowFsSource = `
+      precision mediump float;
+      varying vec2 vPos;
+      uniform float uOpacity;
+      void main() {
+        float dist = length(vPos);
+        if (dist > 1.0) discard;
+        float alpha = (1.0 - smoothstep(0.25, 1.0, dist)) * uOpacity;
+        gl_FragColor = vec4(0.0, 0.0, 0.0, alpha);
+      }
+    `;
+
+    function createCubeData(size = 0.9) {
+      const s = size / 2;
+      const positions = [];
+      const normals = [];
+      const uvs = [];
+      const indices = [];
+
+      function faceUV(faceIdx) {
+        const col = (faceIdx - 1) % 3;
+        const row = Math.floor((faceIdx - 1) / 3);
+        const u0 = col / 3.0;
+        const u1 = (col + 1) / 3.0;
+        const v0 = row / 2.0;
+        const v1 = (row + 1) / 2.0;
+        return [
+          [u0, v1], [u1, v1], [u1, v0], [u0, v0]
+        ];
+      }
+
+      function addQuad(p0, p1, p2, p3, norm, faceIdx) {
+        const baseIdx = positions.length / 3;
+        positions.push(...p0, ...p1, ...p2, ...p3);
+        for (let i = 0; i < 4; i++) normals.push(...norm);
+        const fuv = faceUV(faceIdx);
+        uvs.push(...fuv[0], ...fuv[1], ...fuv[2], ...fuv[3]);
+        indices.push(baseIdx, baseIdx + 1, baseIdx + 2, baseIdx, baseIdx + 2, baseIdx + 3);
+      }
+
+      // Face 1 (Top, +Y)
+      addQuad([-s, s, -s], [s, s, -s], [s, s, s], [-s, s, s], [0, 1, 0], 1);
+      // Face 6 (Bottom, -Y)
+      addQuad([-s, -s, s], [s, -s, s], [s, -s, -s], [-s, -s, -s], [0, -1, 0], 6);
+      // Face 2 (Front, +Z)
+      addQuad([-s, -s, s], [s, -s, s], [s, s, s], [-s, s, s], [0, 0, 1], 2);
+      // Face 5 (Back, -Z)
+      addQuad([s, -s, -s], [-s, -s, -s], [-s, s, -s], [s, s, -s], [0, 0, -1], 5);
+      // Face 3 (Right, +X)
+      addQuad([s, -s, s], [s, -s, -s], [s, s, -s], [s, s, s], [1, 0, 0], 3);
+      // Face 4 (Left, -X)
+      addQuad([-s, -s, -s], [-s, -s, s], [-s, s, s], [-s, s, -s], [-1, 0, 0], 4);
+
+      return {
+        positions: new Float32Array(positions),
+        normals: new Float32Array(normals),
+        uvs: new Float32Array(uvs),
+        indices: new Uint16Array(indices)
+      };
+    }
+
+    function createGothicTextureAtlas(primaryColor = '#991b1b') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1024;
+      canvas.height = 1024;
+      const ctx = canvas.getContext('2d');
+
+      const colWidth = 1024 / 3;
+      const rowHeight = 1024 / 2;
+
+      const pipCoords = {
+        1: [[0.5, 0.5]],
+        2: [[0.28, 0.28], [0.72, 0.72]],
+        3: [[0.26, 0.26], [0.5, 0.5], [0.74, 0.74]],
+        4: [[0.28, 0.28], [0.72, 0.28], [0.28, 0.72], [0.72, 0.72]],
+        5: [[0.28, 0.28], [0.72, 0.28], [0.5, 0.5], [0.28, 0.72], [0.72, 0.72]],
+        6: [[0.28, 0.24], [0.28, 0.5], [0.28, 0.76], [0.72, 0.24], [0.72, 0.5], [0.72, 0.76]]
+      };
+
+      for (let face = 1; face <= 6; face++) {
+        const col = (face - 1) % 3;
+        const row = Math.floor((face - 1) / 3);
+        const ox = col * colWidth;
+        const oy = row * rowHeight;
+        const w = colWidth;
+        const h = rowHeight;
+
+        // Rich velvety background with gradient
+        const bg = ctx.createRadialGradient(ox + w*0.5, oy + h*0.5, 20, ox + w*0.5, oy + h*0.5, w*0.7);
+        bg.addColorStop(0, primaryColor);
+        bg.addColorStop(0.65, '#5c0914');
+        bg.addColorStop(1, '#240206');
+        ctx.fillStyle = bg;
+        ctx.fillRect(ox, oy, w, h);
+
+        // Gold Beveled Border
+        ctx.strokeStyle = '#d4af37';
+        ctx.lineWidth = 10;
+        ctx.strokeRect(ox + 12, oy + 12, w - 24, h - 24);
+
+        // Inner Filigree Line
+        ctx.strokeStyle = 'rgba(255, 235, 150, 0.5)';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(ox + 22, oy + 22, w - 44, h - 44);
+
+        // Corner ornaments
+        ctx.fillStyle = '#ffd700';
+        ctx.fillRect(ox + 18, oy + 18, 12, 12);
+        ctx.fillRect(ox + w - 30, oy + 18, 12, 12);
+        ctx.fillRect(ox + 18, oy + h - 30, 12, 12);
+        ctx.fillRect(ox + w - 30, oy + h - 30, 12, 12);
+
+        // Golden Pips
+        const pips = pipCoords[face];
+        for (const [px, py] of pips) {
+          const cx = ox + px * w;
+          const cy = oy + py * h;
+          const r = face === 1 ? 38 : 25;
+
+          ctx.beginPath();
+          ctx.arc(cx, cy + 4, r, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(0,0,0,0.85)';
+          ctx.fill();
+
+          const pipGrad = ctx.createRadialGradient(cx - r*0.35, cy - r*0.35, 2, cx, cy, r);
+          pipGrad.addColorStop(0, '#ffffff');
+          pipGrad.addColorStop(0.2, '#fff199');
+          pipGrad.addColorStop(0.6, '#d4af37');
+          pipGrad.addColorStop(1, '#6b4f0c');
+          ctx.beginPath();
+          ctx.arc(cx, cy, r, 0, Math.PI * 2);
+          ctx.fillStyle = pipGrad;
+          ctx.fill();
+
+          ctx.strokeStyle = '#3d2c04';
+          ctx.lineWidth = 3;
+          ctx.stroke();
+        }
+      }
+
+      return canvas;
+    }
+
+    class WebGLDiceEngine {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.gl = canvas.getContext('webgl', { alpha: true, antialias: true }) || canvas.getContext('experimental-webgl');
+        if (!this.gl) throw new Error('WebGL context unavailable');
+
+        this.dice = [];
+        this.isRolling = false;
+        this.onRollComplete = null;
+        this.themeColor = '#991b1b';
+
+        this.initGL();
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.loop = this.loop.bind(this);
+        requestAnimationFrame(this.loop);
+      }
+
+      initGL() {
+        const gl = this.gl;
+        gl.enable(gl.DEPTH_TEST);
+        gl.depthFunc(gl.LEQUAL);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        gl.clearColor(0, 0, 0, 0);
+
+        function compileShader(src, type) {
+          const s = gl.createShader(type);
+          gl.shaderSource(s, src);
+          gl.compileShader(s);
+          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            console.error('Shader error:', gl.getShaderInfoLog(s));
+            gl.deleteShader(s);
+            return null;
+          }
+          return s;
+        }
+
+        const vs = compileShader(vsSource, gl.VERTEX_SHADER);
+        const fs = compileShader(fsSource, gl.FRAGMENT_SHADER);
+        this.program = gl.createProgram();
+        gl.attachShader(this.program, vs);
+        gl.attachShader(this.program, fs);
+        gl.linkProgram(this.program);
+
+        this.uMVPMatrix = gl.getUniformLocation(this.program, 'uMVPMatrix');
+        this.uModelMatrix = gl.getUniformLocation(this.program, 'uModelMatrix');
+        this.uNormalMatrix = gl.getUniformLocation(this.program, 'uNormalMatrix');
+        this.uLightDir = gl.getUniformLocation(this.program, 'uLightDir');
+        this.uEyePos = gl.getUniformLocation(this.program, 'uEyePos');
+        this.uSampler = gl.getUniformLocation(this.program, 'uSampler');
+
+        this.aPosition = gl.getAttribLocation(this.program, 'aPosition');
+        this.aNormal = gl.getAttribLocation(this.program, 'aNormal');
+        this.aTexCoord = gl.getAttribLocation(this.program, 'aTexCoord');
+
+        const svs = compileShader(shadowVsSource, gl.VERTEX_SHADER);
+        const sfs = compileShader(shadowFsSource, gl.FRAGMENT_SHADER);
+        this.shadowProgram = gl.createProgram();
+        gl.attachShader(this.shadowProgram, svs);
+        gl.attachShader(this.shadowProgram, sfs);
+        gl.linkProgram(this.shadowProgram);
+
+        this.sMVPMatrix = gl.getUniformLocation(this.shadowProgram, 'uMVPMatrix');
+        this.sOpacity = gl.getUniformLocation(this.shadowProgram, 'uOpacity');
+        this.saPosition = gl.getAttribLocation(this.shadowProgram, 'aPosition');
+
+        this.cubeData = createCubeData(0.9);
+        this.posBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.positions, gl.STATIC_DRAW);
+
+        this.normBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.normals, gl.STATIC_DRAW);
+
+        this.uvBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.cubeData.uvs, gl.STATIC_DRAW);
+
+        this.indexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this.cubeData.indices, gl.STATIC_DRAW);
+
+        const shadowQuad = new Float32Array([
+          -0.85, 0, -0.85,  0.85, 0, -0.85,  0.85, 0, 0.85,
+          -0.85, 0, -0.85,  0.85, 0, 0.85,  -0.85, 0, 0.85
+        ]);
+        this.shadowBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.shadowBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, shadowQuad, gl.STATIC_DRAW);
+
+        this.texture = gl.createTexture();
+        this.updateTexture(this.themeColor);
+      }
+
+      updateTexture(themeColor) {
+        const gl = this.gl;
+        this.themeColor = themeColor;
+        const atlas = createGothicTextureAtlas(themeColor);
+
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.generateMipmap(gl.TEXTURE_2D);
+      }
+
+      resize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        this.canvas.width = width * (window.devicePixelRatio || 1);
+        this.canvas.height = height * (window.devicePixelRatio || 1);
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.aspect = width / height;
+      }
+
+      roll(count = 2, themeColor = null) {
+        if (themeColor && themeColor !== this.themeColor) {
+          this.updateTexture(themeColor);
+        }
+
+        const qty = Math.max(1, Math.min(6, count));
+        this.dice = [];
+        this.isRolling = true;
+        this.canvas.style.pointerEvents = 'auto';
+
+        // CONVERGING THROW TRAJECTORIES:
+        // All dice start from hand/cup near the bottom/sides,
+        // thrown with velocity aiming directly at the common table center [0, 0, 0]!
+        // This ensures they collide with each other in mid-air and on first bounce!
+        const focalCenter = [(Math.random() - 0.5) * 0.4, 0, (Math.random() - 0.5) * 0.4];
+
+        for (let i = 0; i < qty; i++) {
+          // Staggered launch from bottom-center/bottom-right
+          const startX = (i - (qty - 1) / 2) * 0.9 + (Math.random() - 0.5) * 0.3;
+          const startY = 4.2 + Math.random() * 0.8;
+          const startZ = 2.4 + (Math.random() - 0.5) * 0.4;
+          const pos = [startX, startY, startZ];
+
+          // Aim velocity towards focal center + upward toss arc
+          const toCenterX = focalCenter[0] - startX;
+          const toCenterZ = focalCenter[2] - startZ;
+          const vel = [
+            toCenterX * 2.2 + (Math.random() - 0.5) * 1.5,
+            -(4.0 + Math.random() * 2.5),
+            toCenterZ * 2.0 + (Math.random() - 0.5) * 1.2
+          ];
+
+          const angVel = [
+            (Math.random() - 0.5) * 35.0,
+            (Math.random() - 0.5) * 35.0,
+            (Math.random() - 0.5) * 35.0
+          ];
+          const rot = quatNormalize([Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5]);
+
+          this.dice.push({
+            pos,
+            vel,
+            rot,
+            targetRot: null,
+            snapProgress: 0,
+            angVel,
+            radius: 0.45,
+            colRadius: 0.62, // Larger bounding sphere accounting for cube corners (0.45 * sqrt(3) ~ 0.78)
+            settled: false,
+            settleValue: 0
+          });
+        }
+
+        this.lastTime = performance.now();
+
+        return new Promise((resolve) => {
+          this.onRollComplete = (results) => {
+            resolve(results);
+          };
+        });
+      }
+
+      computeSnappedFlatOrientation(q) {
+        // Find which local face normal is pointing most upwards
+        const faces = [
+          { val: 1, norm: [0, 1, 0], baseRot: [0, 0, 0, 1] },
+          { val: 6, norm: [0, -1, 0], baseRot: [1, 0, 0, 0] }, // 180 around X
+          { val: 2, norm: [0, 0, 1], baseRot: [-Math.SQRT1_2, 0, 0, Math.SQRT1_2] }, // -90 around X
+          { val: 5, norm: [0, 0, -1], baseRot: [Math.SQRT1_2, 0, 0, Math.SQRT1_2] }, // +90 around X
+          { val: 3, norm: [1, 0, 0], baseRot: [0, 0, Math.SQRT1_2, Math.SQRT1_2] }, // +90 around Z
+          { val: 4, norm: [-1, 0, 0], baseRot: [0, 0, -Math.SQRT1_2, Math.SQRT1_2] } // -90 around Z
+        ];
+
+        let bestFace = faces[0];
+        let maxDot = -Infinity;
+        const worldNorm = [0, 0, 0];
+
+        for (const f of faces) {
+          rotateVec3ByQuat(worldNorm, f.norm, q);
+          if (worldNorm[1] > maxDot) {
+            maxDot = worldNorm[1];
+            bestFace = f;
+          }
+        }
+
+        // Extract yaw from current quaternion
+        // Yaw angle around world Y axis:
+        const forward = [0, 0, 1];
+        const worldFwd = [0, 0, 0];
+        rotateVec3ByQuat(worldFwd, forward, q);
+        const yaw = Math.atan2(worldFwd[0], worldFwd[2]);
+        // Snap yaw to increments or let it rest with natural table heading
+        const yawQuat = quatFromAxisAngle([0, 1, 0], yaw);
+
+        // Combine base face rotation with table yaw
+        const out = quatMultiply([0, 0, 0, 1], yawQuat, bestFace.baseRot);
+        return {
+          targetQuat: quatNormalize(out),
+          faceValue: bestFace.val
+        };
+      }
+
+      updatePhysics(dt) {
+        const floorY = 0.0;
+        const minX = -this.aspect * 2.3;
+        const maxX = this.aspect * 2.3;
+        const minZ = -2.2;
+        const maxZ = 2.2;
+
+        let allSettled = true;
+
+        for (let i = 0; i < this.dice.length; i++) {
+          const d = this.dice[i];
+          if (d.settled) continue;
+
+          // Gravity
+          d.vel[1] -= 24.0 * dt;
+
+          // Integrate position
+          d.pos[0] += d.vel[0] * dt;
+          d.pos[1] += d.vel[1] * dt;
+          d.pos[2] += d.vel[2] * dt;
+
+          // Integrate rotation
+          const angSpeed = Math.hypot(d.angVel[0], d.angVel[1], d.angVel[2]);
+          if (angSpeed > 0.001 && !d.targetRot) {
+            const axis = [d.angVel[0] / angSpeed, d.angVel[1] / angSpeed, d.angVel[2] / angSpeed];
+            const dq = quatFromAxisAngle(axis, angSpeed * dt);
+            quatMultiply(d.rot, dq, d.rot);
+            quatNormalize(d.rot);
+          }
+
+          // Floor bounce at Y = 0
+          if (d.pos[1] <= floorY + d.radius) {
+            d.pos[1] = floorY + d.radius;
+            if (Math.abs(d.vel[1]) > 0.45) {
+              d.vel[1] = -d.vel[1] * 0.52;
+              d.vel[0] *= 0.84;
+              d.vel[2] *= 0.84;
+              // Angular kick from floor impact
+              d.angVel[0] += (Math.random() - 0.5) * 10.0;
+              d.angVel[2] += (Math.random() - 0.5) * 10.0;
+            } else {
+              d.vel[1] = 0;
+              d.vel[0] *= 0.75;
+              d.vel[2] *= 0.75;
+              d.angVel[0] *= 0.75;
+              d.angVel[1] *= 0.75;
+              d.angVel[2] *= 0.75;
+            }
+          }
+
+          // Wall bounces
+          if (d.pos[0] < minX + d.radius) { d.pos[0] = minX + d.radius; d.vel[0] = Math.abs(d.vel[0]) * 0.75; d.angVel[1] += 5.0; }
+          if (d.pos[0] > maxX - d.radius) { d.pos[0] = maxX - d.radius; d.vel[0] = -Math.abs(d.vel[0]) * 0.75; d.angVel[1] -= 5.0; }
+          if (d.pos[2] < minZ + d.radius) { d.pos[2] = minZ + d.radius; d.vel[2] = Math.abs(d.vel[2]) * 0.75; d.angVel[0] += 5.0; }
+          if (d.pos[2] > maxZ - d.radius) { d.pos[2] = maxZ - d.radius; d.vel[2] = -Math.abs(d.vel[2]) * 0.75; d.angVel[0] -= 5.0; }
+
+          // Air Damping
+          d.vel[0] *= 0.985;
+          d.vel[1] *= 0.985;
+          d.vel[2] *= 0.985;
+          d.angVel[0] *= 0.98;
+          d.angVel[1] *= 0.98;
+          d.angVel[2] *= 0.98;
+
+          // Check for settling & FLAT-SNAP
+          const speed = Math.hypot(d.vel[0], d.vel[1], d.vel[2]);
+          const rotSpeed = Math.hypot(d.angVel[0], d.angVel[1], d.angVel[2]);
+
+          if (d.pos[1] <= floorY + d.radius + 0.08 && speed < 0.35 && rotSpeed < 1.2) {
+            // Begin snapping flat to nearest orthogonal face!
+            if (!d.targetRot) {
+              const snap = this.computeSnappedFlatOrientation(d.rot);
+              d.targetRot = snap.targetQuat;
+              d.settleValue = snap.faceValue;
+              d.snapProgress = 0;
+            }
+
+            d.snapProgress += dt * 5.0; // Slerp to flat over ~0.2s
+            if (d.snapProgress >= 1.0) {
+              d.rot = [...d.targetRot];
+              d.pos[1] = floorY + d.radius; // Exactly flat on floor!
+              d.vel = [0, 0, 0];
+              d.angVel = [0, 0, 0];
+              d.settled = true;
+            } else {
+              quatSlerp(d.rot, d.rot, d.targetRot, Math.min(1.0, d.snapProgress));
+              d.pos[1] = floorY + d.radius;
+              allSettled = false;
+            }
+          } else {
+            allSettled = false;
+          }
+        }
+
+        // RIGID MUTUAL INTER-DICE COLLISIONS:
+        // Use realistic collision diameter (0.62 * 2 = 1.24)
+        for (let i = 0; i < this.dice.length; i++) {
+          for (let j = i + 1; j < this.dice.length; j++) {
+            const a = this.dice[i];
+            const b = this.dice[j];
+            const dx = a.pos[0] - b.pos[0];
+            const dy = a.pos[1] - b.pos[1];
+            const dz = a.pos[2] - b.pos[2];
+            const dist = Math.hypot(dx, dy, dz);
+            const minDist = a.colRadius + b.colRadius; // 1.24 units
+
+            if (dist < minDist && dist > 0.001) {
+              const nx = dx / dist;
+              const ny = dy / dist;
+              const nz = dz / dist;
+              const overlap = (minDist - dist);
+
+              // Separate dice positions completely so they bounce rather than overlap
+              const halfOverlap = overlap * 0.52;
+              a.pos[0] += nx * halfOverlap;
+              a.pos[1] += ny * halfOverlap;
+              a.pos[2] += nz * halfOverlap;
+              b.pos[0] -= nx * halfOverlap;
+              b.pos[1] -= ny * halfOverlap;
+              b.pos[2] -= nz * halfOverlap;
+
+              // Ensure neither penetrates the floor during collision separation
+              if (a.pos[1] < floorY + a.radius) a.pos[1] = floorY + a.radius;
+              if (b.pos[1] < floorY + b.radius) b.pos[1] = floorY + b.radius;
+
+              // Normal velocity exchange with high restitution
+              const dvx = a.vel[0] - b.vel[0];
+              const dvy = a.vel[1] - b.vel[1];
+              const dvz = a.vel[2] - b.vel[2];
+              const vn = dvx * nx + dvy * ny + dvz * nz;
+
+              if (vn < 0) { // Converging
+                const restitution = 0.85;
+                const impulse = -(1 + restitution) * vn * 0.5;
+
+                a.vel[0] += impulse * nx;
+                a.vel[1] += impulse * ny;
+                a.vel[2] += impulse * nz;
+                b.vel[0] -= impulse * nx;
+                b.vel[1] -= impulse * ny;
+                b.vel[2] -= impulse * nz;
+
+                // Strong mutual torque / spin transfer
+                const spinForce = 16.0;
+                a.angVel[0] += (Math.random() - 0.5) * spinForce + ny * 6.0;
+                a.angVel[1] += (Math.random() - 0.5) * spinForce + nx * 6.0;
+                a.angVel[2] += (Math.random() - 0.5) * spinForce + nz * 6.0;
+
+                b.angVel[0] -= (Math.random() - 0.5) * spinForce + ny * 6.0;
+                b.angVel[1] -= (Math.random() - 0.5) * spinForce + nx * 6.0;
+                b.angVel[2] -= (Math.random() - 0.5) * spinForce + nz * 6.0;
+
+                // If either had started snapping, collision breaks the snap and resumes tumbling!
+                a.targetRot = null;
+                b.targetRot = null;
+              }
+            }
+          }
+        }
+
+        if (this.isRolling && allSettled && this.dice.length > 0) {
+          this.isRolling = false;
+          const results = this.dice.map(d => d.settleValue);
+
+          setTimeout(() => {
+            this.canvas.style.pointerEvents = 'none';
+          }, 3000);
+
+          if (this.onRollComplete) {
+            this.onRollComplete(results);
+            this.onRollComplete = null;
+          }
+        }
+      }
+
+      render() {
+        const gl = this.gl;
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        if (this.dice.length === 0) return;
+
+        const eye = [0, 5.5, 4.8];
+        const center = [0, 0, 0];
+        const up = [0, 1, 0];
+
+        const projMatrix = mat4Perspective(mat4Create(), 42 * Math.PI / 180, this.aspect, 0.1, 100.0);
+        const viewMatrix = mat4LookAt(mat4Create(), eye, center, up);
+        const vpMatrix = mat4Multiply(mat4Create(), projMatrix, viewMatrix);
+
+        // 1. Render Shadows on Floor Y = 0
+        gl.useProgram(this.shadowProgram);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.shadowBuffer);
+        gl.enableVertexAttribArray(this.saPosition);
+        gl.vertexAttribPointer(this.saPosition, 3, gl.FLOAT, false, 0, 0);
+
+        for (const d of this.dice) {
+          const shadowModel = mat4Create();
+          shadowModel[12] = d.pos[0];
+          shadowModel[13] = 0.01;
+          shadowModel[14] = d.pos[2];
+          const shadowMVP = mat4Multiply(mat4Create(), vpMatrix, shadowModel);
+          gl.uniformMatrix4fv(this.sMVPMatrix, false, shadowMVP);
+
+          const height = Math.max(0, d.pos[1] - d.radius);
+          const opacity = Math.max(0.1, 0.65 - height * 0.18);
+          gl.uniform1f(this.sOpacity, opacity);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        // 2. Render 3D Dice Cubes
+        gl.useProgram(this.program);
+        gl.uniform3fv(this.uLightDir, [-0.5, 1.5, 0.9]);
+        gl.uniform3fv(this.uEyePos, eye);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
+        gl.uniform1i(this.uSampler, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.posBuffer);
+        gl.enableVertexAttribArray(this.aPosition);
+        gl.vertexAttribPointer(this.aPosition, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.normBuffer);
+        gl.enableVertexAttribArray(this.aNormal);
+        gl.vertexAttribPointer(this.aNormal, 3, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.uvBuffer);
+        gl.enableVertexAttribArray(this.aTexCoord);
+        gl.vertexAttribPointer(this.aTexCoord, 2, gl.FLOAT, false, 0, 0);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+
+        for (const d of this.dice) {
+          const modelMatrix = mat4Create();
+          mat4FromRotationTranslation(modelMatrix, d.rot, d.pos);
+
+          const mvpMatrix = mat4Multiply(mat4Create(), vpMatrix, modelMatrix);
+          gl.uniformMatrix4fv(this.uMVPMatrix, false, mvpMatrix);
+          gl.uniformMatrix4fv(this.uModelMatrix, false, modelMatrix);
+
+          const normMat = new Float32Array([
+            modelMatrix[0], modelMatrix[1], modelMatrix[2],
+            modelMatrix[4], modelMatrix[5], modelMatrix[6],
+            modelMatrix[8], modelMatrix[9], modelMatrix[10]
+          ]);
+          gl.uniformMatrix3fv(this.uNormalMatrix, false, normMat);
+
+          gl.drawElements(gl.TRIANGLES, this.cubeData.indices.length, gl.UNSIGNED_SHORT, 0);
+        }
+      }
+
+      loop(now) {
+        if (!this.lastTime) this.lastTime = now;
+        const dt = Math.min((now - this.lastTime) / 1000, 0.033);
+        this.lastTime = now;
+
+        if (this.isRolling || this.dice.some(d => !d.settled)) {
+          this.updatePhysics(dt);
+        }
+
+        this.render();
+        requestAnimationFrame(this.loop);
+      }
+    }
+
+    const canvas = document.getElementById('canvas3d');
+    const engine = new WebGLDiceEngine(canvas);
+    window.diceEngine = engine;
+
+    async function triggerRoll(count) {
+      document.getElementById('status').textContent = '🎲 Rolando dados...';
+      const results = await engine.roll(count);
+      document.getElementById('status').textContent = 'Dados: [ ' + results.join(', ') + ' ]';
+    }
+
+    console.log('Engine ready v5');
+  </script>
+</body>
+</html>
