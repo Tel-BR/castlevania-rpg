@@ -1517,6 +1517,22 @@
       align-items: center;
       gap: 8px;
     }
+    @media (min-width: 660px) {
+      body.mode-vtt-compact .character-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      body.mode-vtt-compact .reserves-section {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      body.mode-vtt-compact .relics-grid,
+      body.mode-vtt-compact .notes-section {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      body.mode-vtt-compact .top-crests-row {
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
     body.mode-vtt-compact .fact-card {
       padding: 8px 10px;
       gap: 8px;
@@ -1759,6 +1775,17 @@
     </div>
 
     <div class="toolbar-group">
+      <label class="form-label" style="margin:0;" title="Ajustar largura da janela no Owlbear Rodeo">↔️ LARGURA:</label>
+      <select id="selectPopoverWidth" class="select-gothic" onchange="setPopoverWidth(this.value)" title="Redimensionar janela no Owlbear">
+        <option value="480">480px (Compacto)</option>
+        <option value="680">680px (Médio)</option>
+        <option value="760" selected>760px (Padrão)</option>
+        <option value="960">960px (Amplo)</option>
+        <option value="1200">1200px (Extra Amplo)</option>
+      </select>
+      <button class="btn" onclick="openInNewTab()" title="Abrir ficha completa em nova aba do navegador">
+        ↗️ Nova Aba
+      </button>
       <button class="btn" id="btnToggleVtt" onclick="toggleVttMode()" title="Alternar Modo VTT Compacto para Owlbear Rodeo">
         🦉 VTT / Owlbear
       </button>
@@ -4539,6 +4566,41 @@
           vttBtn.title = env.hasOBR ? 'Conectado via Owlbear Rodeo SDK' : 'Executando em modo VTT embutido';
         }
       }
+      try {
+        const savedWidth = localStorage.getItem('castlevania_popover_width') || '760';
+        setPopoverWidth(savedWidth, false);
+      } catch (e) {}
+    }
+
+    // REDIMENSIONAR LARGURA DO POPOVER NO OWLBEAR RODEO
+    async function setPopoverWidth(width, notify = true) {
+      const w = parseInt(width, 10);
+      if (!w) return;
+
+      try {
+        localStorage.setItem('castlevania_popover_width', String(w));
+      } catch (e) {}
+
+      const select = document.getElementById('selectPopoverWidth');
+      if (select) select.value = String(w);
+
+      const obr = (typeof owlbearBridge !== 'undefined' && owlbearBridge && owlbearBridge.obrInstance) || (typeof OBR !== 'undefined' ? OBR : null);
+      if (obr && obr.action && typeof obr.action.setWidth === 'function') {
+        try {
+          await obr.action.setWidth(w);
+        } catch (err) {
+          console.warn('[Owlbear] Erro ao redimensionar popover via OBR.action.setWidth:', err);
+        }
+      }
+
+      if (notify) {
+        showToast(`↔️ Largura da janela ajustada para ${w}px`);
+      }
+    }
+
+    // ABRIR EM NOVA ABA DO NAVEGADOR
+    function openInNewTab() {
+      window.open(window.location.href, '_blank');
     }
 
     // ALTERNAR MODO VTT COMPACTO (OWLBEAR RODEO)
