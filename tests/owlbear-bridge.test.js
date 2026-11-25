@@ -384,6 +384,28 @@ describe('OwlbearBridge - Ticket 03: Detecção, Formatação e Broadcast', () =
     const requested = await bridge.requestSheets();
     assert.equal(requested.type, 'REQUEST_ALL_SHEETS');
   });
+
+  test('getPlayerRole and player metadata resolve safely with GM role and IDs', async () => {
+    mockOBR.player = {
+      getRole: async () => 'GM',
+      getId: async () => 'gm-user-123',
+      getName: async () => 'Arquiteto do Castelo'
+    };
+
+    const bridge = createOwlbearBridge({
+      windowObj: mockWindow,
+      OBR: mockOBR
+    });
+    await bridge.init();
+
+    const role = await bridge.getPlayerRole();
+    const id = await bridge.getPlayerId();
+    const name = await bridge.getPlayerName();
+
+    assert.equal(role, 'GM');
+    assert.equal(id, 'gm-user-123');
+    assert.equal(name, 'Arquiteto do Castelo');
+  });
 });
 
 describe('Owlbear Rodeo v2 manifest.json Verification', () => {

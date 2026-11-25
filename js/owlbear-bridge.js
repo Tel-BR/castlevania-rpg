@@ -146,6 +146,35 @@ export function createOwlbearBridge(options = {}) {
     };
   }
 
+  async function waitForObrReady(timeoutMs = 2500) {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    if (!activeOBR) return false;
+    if (activeOBR.isReady === true) return true;
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const timer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          resolve(Boolean(activeOBR.isReady));
+        }
+      }, timeoutMs);
+
+      if (typeof activeOBR.onReady === 'function') {
+        activeOBR.onReady(() => {
+          if (!settled) {
+            settled = true;
+            clearTimeout(timer);
+            resolve(true);
+          }
+        });
+      } else {
+        clearTimeout(timer);
+        resolve(Boolean(activeOBR.isReady));
+      }
+    });
+  }
+
   async function init() {
     const env = detectEnvironment();
 
@@ -188,22 +217,40 @@ export function createOwlbearBridge(options = {}) {
         }
 
         if (typeof obrInstance.onReady === 'function') {
-          obrInstance.onReady((user) => {
+          obrInstance.onReady(async (user) => {
             isReady = true;
-            currentUser = user || null;
             subscribeBroadcast();
+            try {
+              if (obrInstance.player) {
+                const role = typeof obrInstance.player.getRole === 'function' ? await obrInstance.player.getRole() : (user && user.role);
+                const name = typeof obrInstance.player.getName === 'function' ? await obrInstance.player.getName() : (user && user.name);
+                const id = typeof obrInstance.player.getId === 'function' ? await obrInstance.player.getId() : (user && user.id);
+                currentUser = { role, name, id };
+              }
+            } catch (e) {}
+
             if (typeof onStatusChange === 'function') {
               onStatusChange({ connected: true, user: currentUser, mode: 'owlbear-sdk' });
             }
           });
-        } else if (obrInstance.isReady) {
-          if (typeof obrInstance.isReady.then === 'function') {
-            await obrInstance.isReady;
-          }
+        }
+
+        // Aguarda de forma assíncrona a inicialização do SDK para que getPlayerRole não falhe por corrida
+        await waitForObrReady(1500);
+
+        if (obrInstance.isReady) {
           isReady = true;
           subscribeBroadcast();
+          try {
+            if (obrInstance.player) {
+              const role = typeof obrInstance.player.getRole === 'function' ? await obrInstance.player.getRole() : null;
+              const name = typeof obrInstance.player.getName === 'function' ? await obrInstance.player.getName() : null;
+              const id = typeof obrInstance.player.getId === 'function' ? await obrInstance.player.getId() : null;
+              currentUser = { role, name, id };
+            }
+          } catch (e) {}
           if (typeof onStatusChange === 'function') {
-            onStatusChange({ connected: true, user: null, mode: 'owlbear-sdk' });
+            onStatusChange({ connected: true, user: currentUser, mode: 'owlbear-sdk' });
           }
         }
       } catch (err) {
@@ -253,6 +300,7 @@ export function createOwlbearBridge(options = {}) {
   }
 
   async function getPlayerRole() {
+    await waitForObrReady(1000);
     const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
     if (activeOBR && activeOBR.player && typeof activeOBR.player.getRole === 'function') {
       try {
@@ -265,6 +313,7 @@ export function createOwlbearBridge(options = {}) {
   }
 
   async function getPlayerId() {
+    await waitForObrReady(1000);
     const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
     if (activeOBR && activeOBR.player && typeof activeOBR.player.getId === 'function') {
       try {
@@ -277,6 +326,7 @@ export function createOwlbearBridge(options = {}) {
   }
 
   async function getPlayerName() {
+    await waitForObrReady(1000);
     const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
     if (activeOBR && activeOBR.player && typeof activeOBR.player.getName === 'function') {
       try {
@@ -441,6 +491,7 @@ export function createOwlbearBridge(options = {}) {
     getPlayerRole,
     getPlayerId,
     getPlayerName,
+    waitForObrReady,
     destroy
   };
 }

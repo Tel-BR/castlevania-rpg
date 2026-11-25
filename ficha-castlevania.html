@@ -1748,6 +1748,35 @@
       background: var(--gold-primary);
       color: #000;
     }
+    .btn-role {
+      border-color: var(--gold-dim) !important;
+      color: var(--gold-light) !important;
+      background: rgba(20, 13, 28, 0.85) !important;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-role:hover {
+      border-color: var(--gold-primary) !important;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+    .btn-role-active {
+      background: linear-gradient(135deg, #4d080e 0%, #8f121d 100%) !important;
+      border-color: var(--gold-primary) !important;
+      color: #fff !important;
+      box-shadow: 0 0 12px rgba(217, 28, 44, 0.6), inset 0 0 8px rgba(212, 175, 55, 0.3) !important;
+      font-weight: 700 !important;
+    }
+    .gm-roster-empty-notice {
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 4px;
+      color: var(--gold-dim);
+      font-family: var(--font-body);
+      font-size: 13.5px;
+      font-style: italic;
+      border-left: 3px solid var(--gold-dim);
+    }
 
     /* ==========================================================================
        ESTILOS DE IMPRESSÃO (@MEDIA PRINT)
@@ -1853,7 +1882,7 @@
     <div class="gm-roster-content">
       <div class="gm-badge">
         <span class="crown-icon">👑</span>
-        <span class="gm-title">PAINEL DO MESTRE:</span>
+        <span class="gm-title">PAINEL DO MESTRE (ARQUITETO):</span>
       </div>
       <div class="gm-controls">
         <label for="gmSheetSelector" class="gm-label">FICHAS DA MESA:</label>
@@ -1864,6 +1893,9 @@
           🔄 Atualizar Mesa
         </button>
       </div>
+    </div>
+    <div id="gmRosterEmptyNotice" class="gm-roster-empty-notice">
+      <span>📡 <em>Aguardando jogadores... Quando um jogador abrir a ficha dele na mesa, ela aparecerá na lista acima automaticamente.</em></span>
     </div>
     <div id="gmInspectBanner" class="gm-inspect-banner" style="display: none;">
       <span>👁️ <strong>MODO INSPEÇÃO:</strong> Visualizando ficha de <span id="inspectCharName">Herói</span> (<span id="inspectPlayerName">Jogador</span>)</span>
@@ -1898,6 +1930,9 @@
       </select>
       <button class="btn" onclick="openInNewTab()" title="Abrir ficha completa em nova aba do navegador">
         ↗️ Nova Aba
+      </button>
+      <button class="btn btn-role" id="btnToggleRole" onclick="toggleGmRole()" title="Alternar entre Papel de Mestre (Arquiteto) e Ficha de Jogador">
+        👑 Modo Mestre: OFF
       </button>
       <button class="btn" id="btnToggleVtt" onclick="toggleVttMode()" title="Alternar Modo VTT Compacto para Owlbear Rodeo">
         🦉 VTT / Owlbear
@@ -2637,41 +2672,38 @@
         FractalRollSystem.init().catch(err => console.warn('[FractalRollSystem] Preload warning:', err));
       }
 
+      // Restaura preferência manual de papel (Mestre vs Jogador) se salva
+      let savedManualGm = null;
+      try {
+        savedManualGm = localStorage.getItem('castlevania_is_gm_manual');
+      } catch (e) {}
+
+      if (savedManualGm === 'true') {
+        applyGmRole(true, false);
+      } else if (savedManualGm === 'false') {
+        applyGmRole(false, false);
+      }
+
       // Detecção de ambiente embutido e inicialização da ponte Owlbear Rodeo
       if (typeof owlbearBridge !== 'undefined' && owlbearBridge) {
         owlbearBridge.init().then(async () => {
           const env = owlbearBridge.detectEnvironment();
           updateVttUI(env);
 
-          // Identifica papel do usuário (GM vs PLAYER)
+          // Identifica papel do usuário no Owlbear (GM vs PLAYER)
           try {
             const role = await owlbearBridge.getPlayerRole();
             myPlayerId = await owlbearBridge.getPlayerId();
             myPlayerName = await owlbearBridge.getPlayerName();
-            isGm = (role === 'GM');
+
+            // Se o Owlbear detectou GM, ativa automaticamente o Painel do Mestre
+            if (role === 'GM') {
+              applyGmRole(true, false);
+            } else if (role === 'PLAYER' && savedManualGm !== 'true') {
+              applyGmRole(false, false);
+            }
           } catch (e) {
             console.warn('[Owlbear] Erro ao identificar papel:', e);
-          }
-
-          const gmBar = document.getElementById('gmRosterBar');
-          if (isGm) {
-            if (gmBar) gmBar.style.display = 'block';
-            try {
-              const savedRoster = localStorage.getItem('castlevania_gm_roster');
-              if (savedRoster) {
-                gmPlayerRoster = JSON.parse(savedRoster);
-                updateGmRosterSelect();
-              }
-            } catch (e) {}
-
-            setTimeout(() => {
-              requestAllPlayerSheets();
-            }, 800);
-          } else {
-            if (gmBar) gmBar.style.display = 'none';
-            setTimeout(() => {
-              broadcastMySheet();
-            }, 1000);
           }
 
           // Escuta recepção de sincronização de fichas
@@ -4100,6 +4132,35 @@
         }
       }
 
+      async function waitForObrReady(timeoutMs = 2500) {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        if (!activeOBR) return false;
+        if (activeOBR.isReady === true) return true;
+
+        return new Promise((resolve) => {
+          let settled = false;
+          const timer = setTimeout(() => {
+            if (!settled) {
+              settled = true;
+              resolve(Boolean(activeOBR.isReady));
+            }
+          }, timeoutMs);
+
+          if (typeof activeOBR.onReady === 'function') {
+            activeOBR.onReady(() => {
+              if (!settled) {
+                settled = true;
+                clearTimeout(timer);
+                resolve(true);
+              }
+            });
+          } else {
+            clearTimeout(timer);
+            resolve(Boolean(activeOBR.isReady));
+          }
+        });
+      }
+
       async function init() {
         const env = detectEnvironment();
         if (!obrInstance && win && win.OBR) obrInstance = win.OBR;
@@ -4132,20 +4193,40 @@
             }
 
             if (typeof obrInstance.onReady === 'function') {
-              obrInstance.onReady((user) => {
+              obrInstance.onReady(async (user) => {
                 isReady = true;
-                currentUser = user || null;
                 subscribeBroadcast();
+                try {
+                  if (obrInstance.player) {
+                    const role = typeof obrInstance.player.getRole === 'function' ? await obrInstance.player.getRole() : (user && user.role);
+                    const name = typeof obrInstance.player.getName === 'function' ? await obrInstance.player.getName() : (user && user.name);
+                    const id = typeof obrInstance.player.getId === 'function' ? await obrInstance.player.getId() : (user && user.id);
+                    currentUser = { role, name, id };
+                  }
+                } catch (e) {}
+
                 if (typeof onStatusChange === 'function') {
                   onStatusChange({ connected: true, user: currentUser, mode: 'owlbear-sdk' });
                 }
               });
-            } else if (obrInstance.isReady) {
-              if (typeof obrInstance.isReady.then === 'function') await obrInstance.isReady;
+            }
+
+            // Aguarda inicialização do SDK para evitar condições de corrida com getPlayerRole
+            await waitForObrReady(1500);
+
+            if (obrInstance.isReady) {
               isReady = true;
               subscribeBroadcast();
+              try {
+                if (obrInstance.player) {
+                  const role = typeof obrInstance.player.getRole === 'function' ? await obrInstance.player.getRole() : null;
+                  const name = typeof obrInstance.player.getName === 'function' ? await obrInstance.player.getName() : null;
+                  const id = typeof obrInstance.player.getId === 'function' ? await obrInstance.player.getId() : null;
+                  currentUser = { role, name, id };
+                }
+              } catch (e) {}
               if (typeof onStatusChange === 'function') {
-                onStatusChange({ connected: true, user: null, mode: 'owlbear-sdk' });
+                onStatusChange({ connected: true, user: currentUser, mode: 'owlbear-sdk' });
               }
             }
           } catch (err) {
@@ -4232,6 +4313,7 @@
       }
 
       async function getPlayerRole() {
+        await waitForObrReady(1000);
         const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
         if (activeOBR && activeOBR.player && typeof activeOBR.player.getRole === 'function') {
           try {
@@ -4244,6 +4326,7 @@
       }
 
       async function getPlayerId() {
+        await waitForObrReady(1000);
         const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
         if (activeOBR && activeOBR.player && typeof activeOBR.player.getId === 'function') {
           try {
@@ -4256,6 +4339,7 @@
       }
 
       async function getPlayerName() {
+        await waitForObrReady(1000);
         const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
         if (activeOBR && activeOBR.player && typeof activeOBR.player.getName === 'function') {
           try {
@@ -4348,7 +4432,8 @@
         onReceiveSheet,
         getPlayerRole,
         getPlayerId,
-        getPlayerName
+        getPlayerName,
+        waitForObrReady
       };
     }
 
@@ -5037,6 +5122,55 @@
     let myOwnSavedSheet = null;
     let autoSaveDebounceTimer = null;
 
+    function applyGmRole(active, isManual = false) {
+      isGm = Boolean(active);
+      if (isManual) {
+        try {
+          localStorage.setItem('castlevania_is_gm_manual', isGm ? 'true' : 'false');
+        } catch (e) {}
+      }
+
+      const gmBar = document.getElementById('gmRosterBar');
+      const btnRole = document.getElementById('btnToggleRole');
+
+      if (isGm) {
+        if (gmBar) gmBar.style.display = 'block';
+        if (btnRole) {
+          btnRole.classList.add('btn-role-active');
+          btnRole.innerHTML = '👑 Modo Mestre: ATIVO';
+          btnRole.title = 'Modo Mestre ATIVO. Clique para alternar para visão de Jogador.';
+        }
+        try {
+          const savedRoster = localStorage.getItem('castlevania_gm_roster');
+          if (savedRoster) {
+            gmPlayerRoster = JSON.parse(savedRoster);
+          }
+        } catch (e) {}
+        updateGmRosterSelect();
+        setTimeout(() => {
+          requestAllPlayerSheets();
+        }, 500);
+      } else {
+        if (gmBar) gmBar.style.display = 'none';
+        if (btnRole) {
+          btnRole.classList.remove('btn-role-active');
+          btnRole.innerHTML = '👑 Modo Mestre: OFF';
+          btnRole.title = 'Visão de Jogador. Clique para ativar o Painel do Mestre.';
+        }
+        if (isInspectingPlayer) {
+          returnToMySheet();
+        }
+        setTimeout(() => {
+          broadcastMySheet();
+        }, 600);
+      }
+    }
+
+    function toggleGmRole() {
+      applyGmRole(!isGm, true);
+      showToast(isGm ? '👑 Modo Mestre ATIVADO (Painel visível no topo)' : '👤 Modo Jogador ATIVADO (Ficha pessoal)');
+    }
+
     function applySheetDataToUI(data) {
       if (!data) return;
       Object.assign(sheetData, data);
@@ -5149,11 +5283,17 @@
 
     function updateGmRosterSelect() {
       const select = document.getElementById('gmSheetSelector');
+      const emptyNotice = document.getElementById('gmRosterEmptyNotice');
       if (!select) return;
       const currentVal = select.value;
       select.innerHTML = '<option value="my_sheet">👤 Minha Ficha de Mestre</option>';
 
-      for (const pid of Object.keys(gmPlayerRoster)) {
+      const keys = Object.keys(gmPlayerRoster);
+      if (emptyNotice) {
+        emptyNotice.style.display = keys.length === 0 ? 'block' : 'none';
+      }
+
+      for (const pid of keys) {
         const p = gmPlayerRoster[pid];
         const opt = document.createElement('option');
         opt.value = pid;
