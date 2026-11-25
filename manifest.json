@@ -1,14 +1,14 @@
 {
-  "manifest_version": 1,
   "name": "Castlevania RPG — Ficha Fractal",
   "version": "1.0.0",
+  "manifest_version": 1,
   "description": "Ficha interativa e rolador 3D para Castlevania no sistema Fractal RPG com integração em tempo real ao Owlbear Rodeo.",
   "author": "Fractal RPG",
-  "icon": "https://tel-br.github.io/castlevania-rpg/fractal.svg",
+  "icon": "/castlevania-rpg/icon.svg",
   "action": {
     "title": "Ficha Castlevania RPG",
-    "icon": "https://tel-br.github.io/castlevania-rpg/fractal.svg",
-    "popover": "https://tel-br.github.io/castlevania-rpg/index.html",
+    "icon": "/castlevania-rpg/icon.svg",
+    "popover": "/castlevania-rpg/",
     "width": 480,
     "height": 760
   }
