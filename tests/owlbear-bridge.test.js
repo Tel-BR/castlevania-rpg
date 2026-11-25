@@ -358,6 +358,32 @@ describe('OwlbearBridge - Ticket 03: Detecção, Formatação e Broadcast', () =
     assert.match(sentNotifications[0].message, /Simon Belmont/);
     assert.match(sentNotifications[0].message, /IMPULSO/);
   });
+
+  test('broadcastSheet sends sheet payload on SHEET_SYNC_CHANNEL and requestSheets requests all sheets', async () => {
+    const bridge = createOwlbearBridge({
+      windowObj: mockWindow,
+      OBR: mockOBR
+    });
+    await bridge.init();
+
+    const sampleSheet = {
+      name: 'Radu Bărbat',
+      species: 'humano',
+      facts: { 1: { text: 'Sangue Belmont', broken: false } }
+    };
+
+    const sent = await bridge.broadcastSheet(sampleSheet, { playerId: 'p1', playerName: 'Lucas' });
+    assert.equal(sent.type, 'PLAYER_SHEET_UPDATE');
+    assert.equal(sent.characterName, 'Radu Bărbat');
+    assert.equal(sent.playerName, 'Lucas');
+
+    const lastBroadcast = sentBroadcasts[sentBroadcasts.length - 1];
+    assert.equal(lastBroadcast.channel, 'com.castlevania-rpg.sheet/sync');
+    assert.equal(lastBroadcast.data.characterName, 'Radu Bărbat');
+
+    const requested = await bridge.requestSheets();
+    assert.equal(requested.type, 'REQUEST_ALL_SHEETS');
+  });
 });
 
 describe('Owlbear Rodeo v2 manifest.json Verification', () => {

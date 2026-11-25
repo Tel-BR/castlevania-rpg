@@ -11,6 +11,7 @@
  */
 
 export const OWLBEAR_CHANNEL = 'com.castlevania-rpg.dice/roll';
+export const SHEET_SYNC_CHANNEL = 'com.castlevania-rpg.sheet/sync';
 export const MESSAGE_TYPE = 'FRACTAL_CASTLEVANIA_ROLL';
 export const PROTOCOL_VERSION = '1.0.0';
 
@@ -98,12 +99,15 @@ export function createOwlbearBridge(options = {}) {
   const win = options.windowObj !== undefined ? options.windowObj : (typeof window !== 'undefined' ? window : null);
   let obrInstance = options.OBR || (win && win.OBR ? win.OBR : null);
   const channel = options.channel || OWLBEAR_CHANNEL;
+  const sheetSyncChannel = options.sheetSyncChannel || SHEET_SYNC_CHANNEL;
   const onStatusChange = options.onStatusChange || null;
 
   let isReady = false;
   let currentUser = null;
   const subscribers = new Set();
+  const sheetSubscribers = new Set();
   let obrUnsubscribe = null;
+  let obrSheetUnsubscribe = null;
 
   function detectEnvironment() {
     if (!win) {
@@ -172,6 +176,11 @@ export function createOwlbearBridge(options = {}) {
                   notifySubscribers(event.data);
                 }
               });
+              obrSheetUnsubscribe = obrInstance.broadcast.onMessage(sheetSyncChannel, (event) => {
+                if (event && event.data) {
+                  notifySheetSubscribers(event.data);
+                }
+              });
             } catch (err) {
               console.warn('[OwlbearBridge] Erro ao subscrever broadcast:', err);
             }
@@ -211,8 +220,12 @@ export function createOwlbearBridge(options = {}) {
     if (windowListenerAttached) return;
     if (win && typeof win.addEventListener === 'function') {
       win.addEventListener('message', (event) => {
-        if (event && event.data && event.data.type === MESSAGE_TYPE) {
-          notifySubscribers(event.data);
+        if (event && event.data) {
+          if (event.data.type === MESSAGE_TYPE) {
+            notifySubscribers(event.data);
+          } else if (event.data.type === 'PLAYER_SHEET_UPDATE' || event.data.type === 'REQUEST_ALL_SHEETS') {
+            notifySheetSubscribers(event.data);
+          }
         }
       });
       windowListenerAttached = true;
@@ -227,6 +240,120 @@ export function createOwlbearBridge(options = {}) {
         console.warn('[OwlbearBridge] Erro no callback de recepção:', err);
       }
     }
+  }
+
+  function notifySheetSubscribers(payload) {
+    for (const callback of sheetSubscribers) {
+      try {
+        callback(payload);
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro no callback de sheetSubscribers:', err);
+      }
+    }
+  }
+
+  async function getPlayerRole() {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    if (activeOBR && activeOBR.player && typeof activeOBR.player.getRole === 'function') {
+      try {
+        return await activeOBR.player.getRole();
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro ao obter player.getRole:', err);
+      }
+    }
+    return (currentUser && currentUser.role) || 'PLAYER';
+  }
+
+  async function getPlayerId() {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    if (activeOBR && activeOBR.player && typeof activeOBR.player.getId === 'function') {
+      try {
+        return await activeOBR.player.getId();
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro ao obter player.getId:', err);
+      }
+    }
+    return (currentUser && currentUser.id) || 'local-user';
+  }
+
+  async function getPlayerName() {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    if (activeOBR && activeOBR.player && typeof activeOBR.player.getName === 'function') {
+      try {
+        return await activeOBR.player.getName();
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro ao obter player.getName:', err);
+      }
+    }
+    return (currentUser && currentUser.name) || 'Jogador';
+  }
+
+  async function broadcastSheet(sheetData, metadata = {}) {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    const pid = metadata.playerId || await getPlayerId();
+    const pname = metadata.playerName || await getPlayerName();
+    const payload = {
+      type: 'PLAYER_SHEET_UPDATE',
+      version: PROTOCOL_VERSION,
+      playerId: pid,
+      playerName: pname,
+      characterName: metadata.characterName || (sheetData && sheetData.name) || 'Herói',
+      nature: metadata.nature || (sheetData && sheetData.species) || 'humano',
+      sheetData: sheetData,
+      timestamp: Date.now()
+    };
+
+    if (activeOBR && activeOBR.broadcast && typeof activeOBR.broadcast.sendMessage === 'function') {
+      try {
+        await activeOBR.broadcast.sendMessage(sheetSyncChannel, payload, { destination: 'ALL' });
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro ao enviar broadcast de ficha:', err);
+      }
+    }
+
+    if (win && win.parent && typeof win.parent.postMessage === 'function') {
+      try {
+        win.parent.postMessage(payload, '*');
+      } catch (err) {}
+    }
+
+    return payload;
+  }
+
+  async function requestSheets() {
+    const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+    const pid = await getPlayerId();
+    const payload = {
+      type: 'REQUEST_ALL_SHEETS',
+      version: PROTOCOL_VERSION,
+      from: pid,
+      timestamp: Date.now()
+    };
+
+    if (activeOBR && activeOBR.broadcast && typeof activeOBR.broadcast.sendMessage === 'function') {
+      try {
+        await activeOBR.broadcast.sendMessage(sheetSyncChannel, payload, { destination: 'ALL' });
+      } catch (err) {
+        console.warn('[OwlbearBridge] Erro ao solicitar fichas:', err);
+      }
+    }
+
+    if (win && win.parent && typeof win.parent.postMessage === 'function') {
+      try {
+        win.parent.postMessage(payload, '*');
+      } catch (err) {}
+    }
+
+    return payload;
+  }
+
+  function onReceiveSheet(callback) {
+    if (typeof callback !== 'function') return () => {};
+    setupWindowListener();
+    sheetSubscribers.add(callback);
+    return () => {
+      sheetSubscribers.delete(callback);
+    };
   }
 
   async function broadcastRoll(rollData) {
@@ -289,9 +416,14 @@ export function createOwlbearBridge(options = {}) {
 
   function destroy() {
     subscribers.clear();
+    sheetSubscribers.clear();
     if (typeof obrUnsubscribe === 'function') {
       obrUnsubscribe();
       obrUnsubscribe = null;
+    }
+    if (typeof obrSheetUnsubscribe === 'function') {
+      obrSheetUnsubscribe();
+      obrSheetUnsubscribe = null;
     }
   }
 
@@ -303,6 +435,12 @@ export function createOwlbearBridge(options = {}) {
     init,
     broadcastRoll,
     onReceiveBroadcast,
+    broadcastSheet,
+    requestSheets,
+    onReceiveSheet,
+    getPlayerRole,
+    getPlayerId,
+    getPlayerName,
     destroy
   };
 }

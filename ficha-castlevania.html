@@ -1662,6 +1662,94 @@
     }
 
     /* ==========================================================================
+       PAINEL EXCLUSIVO DO MESTRE (ARQUITETO / GM ROSTER)
+       ========================================================================== */
+    .gm-roster-bar {
+      width: 100%;
+      max-width: 980px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #1c080e 0%, #0e0d16 60%, #260c14 100%);
+      border: 2px solid var(--gold-primary);
+      border-radius: 8px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 18px rgba(143, 18, 29, 0.4), inset 0 0 10px rgba(212, 175, 55, 0.15);
+      box-sizing: border-box;
+      animation: fadeIn 0.3s ease;
+    }
+    .gm-roster-content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .gm-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--gold-light);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+    .gm-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .gm-label {
+      font-family: var(--font-heading);
+      font-size: 11px;
+      color: var(--text-gold);
+      margin: 0;
+    }
+    .gm-select {
+      min-width: 220px;
+      background: #140d1c !important;
+      border-color: var(--gold-dim) !important;
+    }
+    .btn-gm-action {
+      background: var(--crimson-dark);
+      border-color: var(--gold-dim);
+      color: var(--gold-light);
+    }
+    .btn-gm-action:hover {
+      background: var(--crimson-blood);
+      border-color: var(--gold-primary);
+    }
+    .gm-inspect-banner {
+      margin-top: 8px;
+      padding: 8px 12px;
+      background: rgba(143, 18, 29, 0.65);
+      border: 1px dashed var(--gold-light);
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-heading);
+      font-size: 12.5px;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+    .btn-inspect-back {
+      background: var(--gold-dark);
+      color: var(--gold-light);
+      border: 1px solid var(--gold-light);
+      padding: 3px 10px;
+      font-size: 11px;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-inspect-back:hover {
+      background: var(--gold-primary);
+      color: #000;
+    }
+
+    /* ==========================================================================
        ESTILOS DE IMPRESSÃO (@MEDIA PRINT)
        ========================================================================== */
     @media print {
@@ -1757,6 +1845,31 @@
   </style>
 </head>
 <body class="nature-humano">
+
+  <!-- ==========================================================================
+       PAINEL EXCLUSIVO DO ARQUITETO (MESTRE / GM ROSTER)
+       ========================================================================== -->
+  <div id="gmRosterBar" class="gm-roster-bar" style="display: none;">
+    <div class="gm-roster-content">
+      <div class="gm-badge">
+        <span class="crown-icon">👑</span>
+        <span class="gm-title">PAINEL DO MESTRE:</span>
+      </div>
+      <div class="gm-controls">
+        <label for="gmSheetSelector" class="gm-label">FICHAS DA MESA:</label>
+        <select id="gmSheetSelector" class="select-gothic gm-select" onchange="onGmSelectSheet(this.value)">
+          <option value="my_sheet">👤 Minha Ficha de Mestre</option>
+        </select>
+        <button class="btn btn-gm-action" onclick="requestAllPlayerSheets()" title="Solicitar atualização em tempo real de todas as fichas dos jogadores">
+          🔄 Atualizar Mesa
+        </button>
+      </div>
+    </div>
+    <div id="gmInspectBanner" class="gm-inspect-banner" style="display: none;">
+      <span>👁️ <strong>MODO INSPEÇÃO:</strong> Visualizando ficha de <span id="inspectCharName">Herói</span> (<span id="inspectPlayerName">Jogador</span>)</span>
+      <button class="btn btn-inspect-back" onclick="returnToMySheet()">↩️ Voltar para Minha Ficha</button>
+    </div>
+  </div>
 
   <!-- ==========================================================================
        BARRA DE FERRAMENTAS SUPERIOR
@@ -2526,9 +2639,47 @@
 
       // Detecção de ambiente embutido e inicialização da ponte Owlbear Rodeo
       if (typeof owlbearBridge !== 'undefined' && owlbearBridge) {
-        owlbearBridge.init().then(() => {
+        owlbearBridge.init().then(async () => {
           const env = owlbearBridge.detectEnvironment();
           updateVttUI(env);
+
+          // Identifica papel do usuário (GM vs PLAYER)
+          try {
+            const role = await owlbearBridge.getPlayerRole();
+            myPlayerId = await owlbearBridge.getPlayerId();
+            myPlayerName = await owlbearBridge.getPlayerName();
+            isGm = (role === 'GM');
+          } catch (e) {
+            console.warn('[Owlbear] Erro ao identificar papel:', e);
+          }
+
+          const gmBar = document.getElementById('gmRosterBar');
+          if (isGm) {
+            if (gmBar) gmBar.style.display = 'block';
+            try {
+              const savedRoster = localStorage.getItem('castlevania_gm_roster');
+              if (savedRoster) {
+                gmPlayerRoster = JSON.parse(savedRoster);
+                updateGmRosterSelect();
+              }
+            } catch (e) {}
+
+            setTimeout(() => {
+              requestAllPlayerSheets();
+            }, 800);
+          } else {
+            if (gmBar) gmBar.style.display = 'none';
+            setTimeout(() => {
+              broadcastMySheet();
+            }, 1000);
+          }
+
+          // Escuta recepção de sincronização de fichas
+          if (typeof owlbearBridge.onReceiveSheet === 'function') {
+            owlbearBridge.onReceiveSheet((event) => {
+              handleSheetSyncMessage(event);
+            });
+          }
         }).catch(err => console.warn('[OwlbearBridge] Init warning:', err));
 
         // Escuta em tempo real rolagens de outros jogadores na mesa virtual
@@ -3892,16 +4043,21 @@
       };
     }
 
+    const SHEET_SYNC_CHANNEL = 'com.castlevania-rpg.sheet/sync';
+
     function createOwlbearBridge(options = {}) {
       const win = options.windowObj !== undefined ? options.windowObj : (typeof window !== 'undefined' ? window : null);
       let obrInstance = options.OBR || (win && win.OBR ? win.OBR : null);
       const channel = options.channel || OWLBEAR_CHANNEL;
+      const sheetSyncChannel = options.sheetSyncChannel || SHEET_SYNC_CHANNEL;
       const onStatusChange = options.onStatusChange || null;
 
       let isReady = false;
       let currentUser = null;
       const subscribers = new Set();
+      const sheetSubscribers = new Set();
       let obrUnsubscribe = null;
+      let obrSheetUnsubscribe = null;
       let windowListenerAttached = false;
 
       function detectEnvironment() {
@@ -3932,8 +4088,12 @@
         if (windowListenerAttached) return;
         if (win && typeof win.addEventListener === 'function') {
           win.addEventListener('message', (event) => {
-            if (event && event.data && event.data.type === MESSAGE_TYPE) {
-              notifySubscribers(event.data);
+            if (event && event.data) {
+              if (event.data.type === MESSAGE_TYPE) {
+                notifySubscribers(event.data);
+              } else if (event.data.type === 'PLAYER_SHEET_UPDATE' || event.data.type === 'REQUEST_ALL_SHEETS') {
+                notifySheetSubscribers(event.data);
+              }
             }
           });
           windowListenerAttached = true;
@@ -3961,6 +4121,9 @@
                 try {
                   obrUnsubscribe = obrInstance.broadcast.onMessage(channel, (event) => {
                     if (event && event.data) notifySubscribers(event.data);
+                  });
+                  obrSheetUnsubscribe = obrInstance.broadcast.onMessage(sheetSyncChannel, (event) => {
+                    if (event && event.data) notifySheetSubscribers(event.data);
                   });
                 } catch (err) {
                   console.warn('[OwlbearBridge] Erro ao subscrever broadcast:', err);
@@ -4058,6 +4221,120 @@
         };
       }
 
+      function notifySheetSubscribers(payload) {
+        for (const callback of sheetSubscribers) {
+          try {
+            callback(payload);
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro sheetSubscriber:', err);
+          }
+        }
+      }
+
+      async function getPlayerRole() {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        if (activeOBR && activeOBR.player && typeof activeOBR.player.getRole === 'function') {
+          try {
+            return await activeOBR.player.getRole();
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao obter player.getRole:', err);
+          }
+        }
+        return (currentUser && currentUser.role) || 'PLAYER';
+      }
+
+      async function getPlayerId() {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        if (activeOBR && activeOBR.player && typeof activeOBR.player.getId === 'function') {
+          try {
+            return await activeOBR.player.getId();
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao obter player.getId:', err);
+          }
+        }
+        return (currentUser && currentUser.id) || 'local-user';
+      }
+
+      async function getPlayerName() {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        if (activeOBR && activeOBR.player && typeof activeOBR.player.getName === 'function') {
+          try {
+            return await activeOBR.player.getName();
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao obter player.getName:', err);
+          }
+        }
+        return (currentUser && currentUser.name) || 'Jogador';
+      }
+
+      async function broadcastSheet(sheetData, metadata = {}) {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        const pid = metadata.playerId || await getPlayerId();
+        const pname = metadata.playerName || await getPlayerName();
+        const payload = {
+          type: 'PLAYER_SHEET_UPDATE',
+          version: PROTOCOL_VERSION,
+          playerId: pid,
+          playerName: pname,
+          characterName: metadata.characterName || (sheetData && sheetData.name) || 'Herói',
+          nature: metadata.nature || (sheetData && sheetData.species) || 'humano',
+          sheetData: sheetData,
+          timestamp: Date.now()
+        };
+
+        if (activeOBR && activeOBR.broadcast && typeof activeOBR.broadcast.sendMessage === 'function') {
+          try {
+            await activeOBR.broadcast.sendMessage(sheetSyncChannel, payload, { destination: 'ALL' });
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao enviar broadcast de ficha:', err);
+          }
+        }
+
+        if (win && win.parent && typeof win.parent.postMessage === 'function') {
+          try {
+            win.parent.postMessage(payload, '*');
+          } catch (err) {}
+        }
+
+        return payload;
+      }
+
+      async function requestSheets() {
+        const activeOBR = obrInstance || (win && win.OBR ? win.OBR : null);
+        const pid = await getPlayerId();
+        const payload = {
+          type: 'REQUEST_ALL_SHEETS',
+          version: PROTOCOL_VERSION,
+          from: pid,
+          timestamp: Date.now()
+        };
+
+        if (activeOBR && activeOBR.broadcast && typeof activeOBR.broadcast.sendMessage === 'function') {
+          try {
+            await activeOBR.broadcast.sendMessage(sheetSyncChannel, payload, { destination: 'ALL' });
+          } catch (err) {
+            console.warn('[OwlbearBridge] Erro ao solicitar fichas:', err);
+          }
+        }
+
+        if (win && win.parent && typeof win.parent.postMessage === 'function') {
+          try {
+            win.parent.postMessage(payload, '*');
+          } catch (err) {}
+        }
+
+        return payload;
+      }
+
+      function onReceiveSheet(callback) {
+        if (typeof callback !== 'function') return () => {};
+        setupWindowListener();
+        sheetSubscribers.add(callback);
+        return () => {
+          sheetSubscribers.delete(callback);
+        };
+      }
+
       return {
         get isReady() { return isReady; },
         get currentUser() { return currentUser; },
@@ -4065,7 +4342,13 @@
         detectEnvironment,
         init,
         broadcastRoll,
-        onReceiveBroadcast
+        onReceiveBroadcast,
+        broadcastSheet,
+        requestSheets,
+        onReceiveSheet,
+        getPlayerRole,
+        getPlayerId,
+        getPlayerName
       };
     }
 
@@ -4745,8 +5028,191 @@
       autoSave();
     }
 
+    // ESTADO E CONTROLE MULTI-FICHA DO MESTRE (GM ROSTER)
+    let isGm = false;
+    let myPlayerId = 'local-user';
+    let myPlayerName = 'Jogador';
+    let gmPlayerRoster = {};
+    let isInspectingPlayer = false;
+    let myOwnSavedSheet = null;
+    let autoSaveDebounceTimer = null;
+
+    function applySheetDataToUI(data) {
+      if (!data) return;
+      Object.assign(sheetData, data);
+
+      const nameEl = document.getElementById('charName');
+      const playerEl = document.getElementById('charPlayer');
+      const conceptEl = document.getElementById('charConcept');
+      const xpEl = document.getElementById('charXPDisplay');
+      if (nameEl) nameEl.value = sheetData.name || '';
+      if (playerEl) playerEl.value = sheetData.player || '';
+      if (conceptEl) conceptEl.value = sheetData.concept || '';
+      if (xpEl) xpEl.textContent = sheetData.xp || 0;
+
+      for (let i = 1; i <= 7; i++) {
+        const inp = document.getElementById(`factInput-${i}`);
+        const card = document.getElementById(`factCard-${i}`);
+        const btn = document.getElementById(`rupturaBtn-${i}`);
+        if (inp && sheetData.facts && sheetData.facts[i]) {
+          inp.value = sheetData.facts[i].text || '';
+          if (sheetData.facts[i].broken) {
+            if (card) card.classList.add('fact-broken');
+            if (btn) btn.classList.add('active');
+          } else {
+            if (card) card.classList.remove('fact-broken');
+            if (btn) btn.classList.remove('active');
+          }
+        }
+      }
+
+      if (sheetData.powers) {
+        const p1n = document.getElementById('powerOneName');
+        const p1e = document.getElementById('powerOneEffect');
+        const p2n = document.getElementById('powerTwoName');
+        const p2e = document.getElementById('powerTwoEffect');
+        const p3n = document.getElementById('powerThreeName');
+        const p3e = document.getElementById('powerThreeEffect');
+        if (p1n) p1n.value = sheetData.powers[1]?.name || '';
+        if (p1e) p1e.value = sheetData.powers[1]?.effect || '';
+        if (p2n) p2n.value = sheetData.powers[2]?.name || '';
+        if (p2e) p2e.value = sheetData.powers[2]?.effect || '';
+        if (p3n) p3n.value = sheetData.powers[3]?.name || '';
+        if (p3e) p3e.value = sheetData.powers[3]?.effect || '';
+      }
+
+      const scarsEl = document.getElementById('charScarsNotes');
+      const invEl = document.getElementById('charInventoryNotes');
+      if (scarsEl) scarsEl.value = sheetData.scars || '';
+      if (invEl) invEl.value = sheetData.inventory || '';
+
+      setSpecies(sheetData.species || 'humano', false);
+      renderPips();
+      updateWarnings();
+      updateDicePoolDisplay();
+    }
+
+    function broadcastMySheet() {
+      if (isInspectingPlayer) return;
+      if (typeof owlbearBridge !== 'undefined' && owlbearBridge && typeof owlbearBridge.broadcastSheet === 'function') {
+        const pName = document.getElementById('charPlayer').value || myPlayerName;
+        const cName = document.getElementById('charName').value || sheetData.name;
+        owlbearBridge.broadcastSheet(sheetData, {
+          playerId: myPlayerId,
+          playerName: pName,
+          characterName: cName,
+          nature: sheetData.species || 'humano'
+        });
+      }
+    }
+
+    function requestAllPlayerSheets() {
+      if (typeof owlbearBridge !== 'undefined' && owlbearBridge && typeof owlbearBridge.requestSheets === 'function') {
+        owlbearBridge.requestSheets();
+        showToast('📡 Solicitando fichas dos jogadores conectados...');
+      }
+    }
+
+    function handleSheetSyncMessage(data) {
+      if (!data || !data.type) return;
+
+      if (data.type === 'REQUEST_ALL_SHEETS') {
+        if (!isGm) {
+          broadcastMySheet();
+        }
+      } else if (data.type === 'PLAYER_SHEET_UPDATE') {
+        if (!isGm) return;
+        if (data.playerId === myPlayerId) return;
+
+        gmPlayerRoster[data.playerId] = {
+          playerName: data.playerName || 'Jogador',
+          characterName: data.characterName || 'Herói',
+          nature: data.nature || 'humano',
+          sheetData: data.sheetData,
+          timestamp: data.timestamp || Date.now()
+        };
+
+        try {
+          localStorage.setItem('castlevania_gm_roster', JSON.stringify(gmPlayerRoster));
+        } catch (e) {}
+
+        updateGmRosterSelect();
+
+        if (isInspectingPlayer === data.playerId) {
+          applySheetDataToUI(data.sheetData);
+          showToast(`🔄 Ficha de ${data.characterName} atualizada em tempo real!`);
+        } else {
+          showToast(`📜 Ficha recebida: ${data.characterName} (${data.playerName})`);
+        }
+      }
+    }
+
+    function updateGmRosterSelect() {
+      const select = document.getElementById('gmSheetSelector');
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = '<option value="my_sheet">👤 Minha Ficha de Mestre</option>';
+
+      for (const pid of Object.keys(gmPlayerRoster)) {
+        const p = gmPlayerRoster[pid];
+        const opt = document.createElement('option');
+        opt.value = pid;
+        opt.textContent = `⚔️ ${p.characterName || 'Sem Nome'} (${p.playerName}) — [${(p.nature || 'humano').toUpperCase()}]`;
+        select.appendChild(opt);
+      }
+
+      if (currentVal && Array.from(select.options).some(o => o.value === currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    function onGmSelectSheet(value) {
+      if (value === 'my_sheet') {
+        returnToMySheet();
+        return;
+      }
+
+      const playerInfo = gmPlayerRoster[value];
+      if (!playerInfo || !playerInfo.sheetData) return;
+
+      if (!isInspectingPlayer) {
+        autoSave();
+        myOwnSavedSheet = JSON.parse(JSON.stringify(sheetData));
+      }
+
+      isInspectingPlayer = value;
+      applySheetDataToUI(playerInfo.sheetData);
+
+      const banner = document.getElementById('gmInspectBanner');
+      const charSpan = document.getElementById('inspectCharName');
+      const playerSpan = document.getElementById('inspectPlayerName');
+      if (banner) banner.style.display = 'flex';
+      if (charSpan) charSpan.textContent = playerInfo.characterName || 'Herói';
+      if (playerSpan) playerSpan.textContent = playerInfo.playerName || 'Jogador';
+
+      showToast(`👁️ Visualizando ficha de ${playerInfo.characterName}`);
+    }
+
+    function returnToMySheet() {
+      isInspectingPlayer = false;
+      const banner = document.getElementById('gmInspectBanner');
+      if (banner) banner.style.display = 'none';
+
+      const select = document.getElementById('gmSheetSelector');
+      if (select) select.value = 'my_sheet';
+
+      if (myOwnSavedSheet) {
+        applySheetDataToUI(myOwnSavedSheet);
+      } else {
+        loadSavedData();
+      }
+      showToast('👤 Retornado para sua Ficha de Mestre');
+    }
+
     // PERSISTÊNCIA LOCALSTORAGE
     function autoSave() {
+      if (isInspectingPlayer) return; // Não sobrescreve ficha do jogador no localStorage do GM
+
       sheetData.name = document.getElementById('charName').value;
       sheetData.player = document.getElementById('charPlayer').value;
       sheetData.concept = document.getElementById('charConcept').value;
@@ -4778,6 +5244,11 @@
       sheetData.inventory = document.getElementById('charInventoryNotes').value;
 
       localStorage.setItem('fractal_castlevania_sheet', JSON.stringify(sheetData));
+
+      clearTimeout(autoSaveDebounceTimer);
+      autoSaveDebounceTimer = setTimeout(() => {
+        broadcastMySheet();
+      }, 350);
     }
 
     function saveCharacterSheet(manual = false) {
@@ -4793,39 +5264,7 @@
       }
       try {
         const data = JSON.parse(raw);
-        Object.assign(sheetData, data);
-
-        document.getElementById('charName').value = sheetData.name || '';
-        document.getElementById('charPlayer').value = sheetData.player || '';
-        document.getElementById('charConcept').value = sheetData.concept || '';
-        document.getElementById('charXPDisplay').textContent = sheetData.xp || 0;
-
-        for (let i = 1; i <= 7; i++) {
-          const inp = document.getElementById(`factInput-${i}`);
-          if (inp && sheetData.facts[i]) {
-            inp.value = sheetData.facts[i].text || '';
-            if (sheetData.facts[i].broken) {
-              const card = document.getElementById(`factCard-${i}`);
-              const btn = document.getElementById(`rupturaBtn-${i}`);
-              if (card) card.classList.add('fact-broken');
-              if (btn) btn.classList.add('active');
-            }
-          }
-        }
-
-        if (sheetData.powers) {
-          document.getElementById('powerOneName').value = sheetData.powers[1]?.name || '';
-          document.getElementById('powerOneEffect').value = sheetData.powers[1]?.effect || '';
-          document.getElementById('powerTwoName').value = sheetData.powers[2]?.name || '';
-          document.getElementById('powerTwoEffect').value = sheetData.powers[2]?.effect || '';
-          document.getElementById('powerThreeName').value = sheetData.powers[3]?.name || '';
-          document.getElementById('powerThreeEffect').value = sheetData.powers[3]?.effect || '';
-        }
-
-        document.getElementById('charScarsNotes').value = sheetData.scars || '';
-        document.getElementById('charInventoryNotes').value = sheetData.inventory || '';
-
-        setSpecies(sheetData.species || 'humano', false);
+        applySheetDataToUI(data);
       } catch (e) {
         console.error('Erro ao ler ficha salva:', e);
       }
